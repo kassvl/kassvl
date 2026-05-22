@@ -84,15 +84,4 @@ databases      MySQL · PostgreSQL
   </tr>
 </table>
 
-## 📊 GitHub Analytics
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=kassvl&show_icons=true&theme=tokyonight&locale=en" alt="kassvl GitHub Stats" height="150" />
-  &nbsp;&nbsp;
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=kassvl&layout=compact&theme=tokyonight&locale=en" alt="kassvl Top Languages" height="150" />
-</p>
-
----
-<p align="center">
-
-</p>
