@@ -1,6 +1,5 @@
 ### kassvl / README.md
 
-🟢 🟡 🔴
 
 ```bash
 $ whoami
@@ -35,8 +34,8 @@ I am a Software Engineer dedicated to writing clean, maintainable code, automati
 ```text
 languages      Python · TypeScript · SQL · Bash · HCL
 cloud/devops   AWS · Azure · Kubernetes · Istio · Docker · Terraform
-frameworks     Flask · React · Next.js · Node.js
-databases      MySQL · PostgreSQL · Redis
+frameworks     Flask · React · 
+databases      MySQL · PostgreSQL 
 ```
 
 ## 🚀 Featured Projects
@@ -95,5 +94,5 @@ databases      MySQL · PostgreSQL · Redis
 
 ---
 <p align="center">
-  Generated with ❤️ by Antigravity AI
+
 </p>
