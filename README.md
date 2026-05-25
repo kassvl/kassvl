@@ -28,7 +28,7 @@ working-student roles · Wrocław preferred · EU remote OK_
 
 ---
 
-## 🛠️ Tech Stack & Tooling
+## Tech Stack & Tooling
 
 ```text
 languages       Python · TypeScript · Bash · HCL · SQL · YAML
@@ -45,9 +45,9 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 ---
 
-## 🚀 Featured Projects
+##  Featured Projects
 
-### 🔒 Secure Biometric Payment Infrastructure
+###  Secure Biometric Payment Infrastructure
 > FinTech-grade Terraform IaC modeled after a regulated European payment processor.
 
 - **7 Terraform 1.9 modules** across **2 AWS regions** (eu-central-1 primary + eu-west-1 DR)
@@ -58,7 +58,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 [**View Repository →**](https://github.com/kassvl/biometric-payment-infrastructure)
 
-### 🕸️ Multi-Cluster Istio Service Mesh
+###  Multi-Cluster Istio Service Mesh
 > Two-cluster Kubernetes mesh simulating AWS + GCP locally on Kind.
 
 - Automatic **mTLS** verified via `istioctl x authz check`
@@ -68,7 +68,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 [**View Repository →**](https://github.com/kassvl/multi-cluster-istio-mesh)
 
-### 🛠️ GitHealthCheck CLI
+###  GitHealthCheck CLI
 > Audits Git repository health — 20+ quality metrics, single binary, zero network calls.
 
 - Stale branches, large files, commit hygiene, contributor patterns
@@ -77,7 +77,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 [**View Repository →**](https://github.com/kassvl/GitHealthCheck-CLI)
 
-### 🌱 GreenFleet — Renewable Energy Forecasting
+###  GreenFleet — Renewable Energy Forecasting
 > FastAPI + Next.js 14 platform with 7-day ML forecasts.
 
 - Battery-storage simulation for distributed off-grid sites
@@ -88,7 +88,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 ---
 
-## 🎓 Education & Certifications
+##  Education & Certifications
 
 | | |
 |---|---|
@@ -101,7 +101,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 ---
 
-## 📊 GitHub Stats
+##  GitHub Stats
 
 <p align="center">
   <a href="https://github.com/kassvl">
@@ -126,14 +126,13 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 ---
 
-## 🌍 Languages
+##  Languages
 
-`Turkish (Native)` · `English (C1+, full professional)` · `Polish (A2 – B1, improving)`
+`Turkish (Native)` · `English (C1+, full professional)` · `Polish (A2, improving)`
 
 ---
 
-> 💬 *Working student / internship inquiries welcome — Wrocław preferred, Warsaw / Kraków / Gdańsk / EU remote OK. Karta Pobytu holder, no sponsorship needed. Mandatory graduation internship requirement (WSB Merito).*
-
+>  *Working student / internship inquiries welcome — Wrocław preferred, Warsaw / Kraków / Gdańsk / EU remote OK. Karta Pobytu holder, no sponsorship needed.
 <!-- Profile views (optional, free counter) -->
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=kassvl&label=Profile%20views&color=8957e5&style=flat-square" alt="Profile views" />
