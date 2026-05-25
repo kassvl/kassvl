@@ -1,8 +1,5 @@
 [![Status](https://img.shields.io/badge/Status-Open%20to%20Cloud%20%2F%20DevOps%20Internships-2EA043?style=flat-square)](https://kadirhanemrememis.xyz)
 [![Location](https://img.shields.io/badge/Location-Wroc%C5%82aw%2C%20Poland-1F6FEB?style=flat-square)](https://kadirhanemrememis.xyz)
-[![Work Auth](https://img.shields.io/badge/Work%20Auth-Karta%20Pobytu%20(EU)-8957E5?style=flat-square)](https://kadirhanemrememis.xyz)
-[![EPAM](https://img.shields.io/badge/EPAM-Cloud%20%26%20DevOps%20Trainee-FF6B0B?style=flat-square)](https://kadirhanemrememis.xyz)
-[![OCI](https://img.shields.io/badge/Oracle%20Cloud-2025%20Foundations%20Associate-F80000?style=flat-square&logo=oracle)](https://kadirhanemrememis.xyz)
 
 ### kassvl / README.md
 
