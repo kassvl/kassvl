@@ -101,31 +101,6 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 ---
 
-##  GitHub Stats
-
-<p align="center">
-  <a href="https://github.com/kassvl">
-    <img height="160" src="https://github-readme-stats.vercel.app/api?username=kassvl&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true" alt="Kadirhan's GitHub stats" />
-  </a>
-  <a href="https://github.com/kassvl">
-    <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=kassvl&layout=compact&theme=tokyonight&hide_border=true&langs_count=8" alt="Top Languages" />
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/kassvl">
-    <img src="https://github-readme-streak-stats.herokuapp.com/?user=kassvl&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/kassvl">
-    <img src="https://github-profile-trophy.vercel.app/?username=kassvl&theme=tokyonight&no-frame=true&row=1&column=7" alt="GitHub Trophies" />
-  </a>
-</p>
-
----
-
 ##  Languages
 
 `Turkish (Native)` · `English (C1+, full professional)` · `Polish (A2, improving)`
