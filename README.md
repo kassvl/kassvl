@@ -63,7 +63,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 - Automatic **mTLS** verified via `istioctl x authz check`
 - **AuthorizationPolicy + PeerAuthentication** enforced cluster-wide
-- **East-west gateway** for cross-cluster service discovery
+- East-west gateway for true multi-cluster discovery **in roadmap**
 - **Kiali + Prometheus + Grafana** for golden-signal observability
 
 [**View Repository →**](https://github.com/kassvl/multi-cluster-istio-mesh)
