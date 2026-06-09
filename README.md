@@ -89,7 +89,7 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 | | |
 |---|---|
-| 🎓 **B.Eng. — Information Technology** · WSB Merito Wrocław | Sep 2023 → Jun 2027 |
+| 🎓 **B.Eng. — Information Technology** · WSB Merito Wrocław | Sep 2023 → Feb 2027 |
 | 💼 **EPAM Cloud & DevOps Trainee** · Wrocław | Feb 2026 – Apr 2026 |
 | 🏅 **Oracle Cloud Infrastructure 2025 Foundations Associate** | 2025 |
 | 🐧 **Introduction to Cloud Infrastructure (LFS151x)** · Linux Foundation | — |
