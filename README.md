@@ -104,7 +104,24 @@ compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-
 
 ---
 
->  *Working student / internship inquiries welcome — Wrocław preferred, Warsaw / Kraków / Gdańsk / EU remote OK. Karta Pobytu holder, no sponsorship needed.
+##  GitHub Stats
+
+<p align="center">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=kassvl&theme=github_dark" alt="GitHub profile summary" width="100%" />
+</p>
+
+<p align="center">
+  <img height="180" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=kassvl&theme=github_dark" alt="Repos per language" />
+  <img height="180" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=kassvl&theme=github_dark" alt="Most commit language" />
+</p>
+
+<p align="center">
+  <img src="https://streak-stats.demolab.com?user=kassvl&theme=dark&hide_border=true&background=0D1117" alt="Contribution streak" />
+</p>
+
+---
+
+>  *Working student / internship inquiries welcome — Wrocław preferred, Warsaw / Kraków / Gdańsk / EU remote OK. Karta Pobytu holder, no sponsorship needed.*
 <!-- Profile views (optional, free counter) -->
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=kassvl&label=Profile%20views&color=8957e5&style=flat-square" alt="Profile views" />
