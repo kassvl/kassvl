@@ -1,4 +1,4 @@
-[![Status](https://img.shields.io/badge/Status-Open%20to%20Cloud%20%2F%20DevOps%20Internships-2EA043?style=flat-square)](https://kadirhanemrememis.xyz)
+[![Status](https://img.shields.io/badge/Status-Open%20to%20Work%3A%20Junior%20Cloud%20%2F%20DevOps-2EA043?style=flat-square)](https://kadirhanemrememis.xyz)
 [![Location](https://img.shields.io/badge/Location-Wroc%C5%82aw%2C%20Poland-1F6FEB?style=flat-square)](https://kadirhanemrememis.xyz)
 [![Portfolio](https://img.shields.io/badge/Portfolio-kadirhanemrememis.xyz-0A0A0A?style=flat-square&logo=vercel&logoColor=white)](https://kadirhanemrememis.xyz)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-kadirhan--emre-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/kadirhan-emre)
@@ -13,8 +13,9 @@ I build meshes, break them on purpose, and write the tooling that
 answers the pager: deterministic incident response for Istio.
 
 $ now
-Open to Cloud / DevOps / Platform internships & working-student roles.
-Wrocław preferred · EU remote OK · Karta Pobytu holder, no sponsorship needed_
+Open to work: junior Cloud / DevOps / Platform roles,
+full-time or working-student. Wrocław preferred · EU remote OK ·
+Karta Pobytu holder, no sponsorship needed_
 ```
 
 ## MeshMedic — deterministic first responder for Istio
@@ -67,4 +68,4 @@ security        mTLS · IRSA · External Secrets · Checkov · tfsec · Trivy
 
 ---
 
-> Working student / internship inquiries welcome — [kadirhanemre@proton.me](mailto:kadirhanemre@proton.me) · Wrocław preferred, EU remote OK.
+> Junior role and working-student inquiries welcome — [kadirhanemre@proton.me](mailto:kadirhanemre@proton.me) · Wrocław preferred, EU remote OK.
