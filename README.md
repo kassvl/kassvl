@@ -1,128 +1,70 @@
 [![Status](https://img.shields.io/badge/Status-Open%20to%20Cloud%20%2F%20DevOps%20Internships-2EA043?style=flat-square)](https://kadirhanemrememis.xyz)
 [![Location](https://img.shields.io/badge/Location-Wroc%C5%82aw%2C%20Poland-1F6FEB?style=flat-square)](https://kadirhanemrememis.xyz)
-
-### kassvl / README.md
+[![Portfolio](https://img.shields.io/badge/Portfolio-kadirhanemrememis.xyz-0A0A0A?style=flat-square&logo=vercel&logoColor=white)](https://kadirhanemrememis.xyz)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-kadirhan--emre-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/kadirhan-emre)
 
 ```bash
 $ whoami
 kadirhan — cloud & devops engineer (in training)
 
 $ cat /etc/motd
-3rd-year IT student at WSB Merito Wrocław.
-EPAM Cloud & DevOps Trainee (Feb–Apr 2026).
-Building production-shaped AWS platforms — Terraform IaC,
-EKS + Istio Ambient, DevSecOps CI gates — with EU compliance
-baked in (PCI-DSS, GDPR, EU DORA).
+Final-year IT student in Wrocław. EPAM Cloud & DevOps Trainee ('26).
+I build meshes, break them on purpose, and write the tooling that
+answers the pager: deterministic incident response for Istio.
 
 $ now
-Preparing for Cloud / DevOps / DevSecOps internships and
-working-student roles · Wrocław preferred · EU remote OK_
+Open to Cloud / DevOps / Platform internships & working-student roles.
+Wrocław preferred · EU remote OK · Karta Pobytu holder, no sponsorship needed_
 ```
 
-[![Email](https://img.shields.io/badge/Email-kadirhanemre%40proton.me-6D4AFF?style=for-the-badge&logo=protonmail&logoColor=white)](mailto:kadirhanemre@proton.me)
-[![Portfolio](https://img.shields.io/badge/Portfolio-kadirhanemrememis.xyz-0A0A0A?style=for-the-badge&logo=vercel&logoColor=white)](https://kadirhanemrememis.xyz)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-kadirhan--emre-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/kadirhan-emre)
+## MeshMedic — deterministic first responder for Istio
 
----
+<a href="https://github.com/kassvl/meshmedic">
+  <img src="https://raw.githubusercontent.com/kassvl/meshmedic/main/demo/video/meshmedic-demo.gif" alt="MeshMedic demo: live fault to evidence-backed pull request to healed mesh" width="100%" />
+</a>
 
-## Tech Stack & Tooling
+Prometheus signal in → reviewed failure-catalog match → evidence-backed GitOps pull request out.
+No LLM in the detection or remediation path, and no write access to the cluster.
+
+- 19-scenario failure catalog — every entry live-verified on a kind + Istio Ambient testbed
+- reads the ambient L4 mTLS denials in ztunnel telemetry that never reach request metrics
+- the fix arrives as a PR carrying labeled PromQL evidence, config reads and a rollback plan
+- learns per-service latency baselines (EWMA) and records unknown anomalies for human triage
+- closes the loop: resolution report with MTTR once the incident recovers
+
+**[meshmedic →](https://github.com/kassvl/meshmedic)** · **[mesh-incidents-bench →](https://github.com/kassvl/mesh-incidents-bench)** — the reproducible failure scenarios I built to score it honestly. Misses are published, author bias is disclosed.
+
+## Selected work
+
+| repo | what it is | built with |
+|---|---|---|
+| [meshmedic](https://github.com/kassvl/meshmedic) | Incident-time remediation for Istio: signal in, reviewable PR out | Go · Prometheus · Argo CD |
+| [mesh-incidents-bench](https://github.com/kassvl/mesh-incidents-bench) | Reproducible mesh failure scenarios with ground truth and scoring rubrics | Bash · kind · Istio Ambient |
+| [istio-ambient-aiops-thesis](https://github.com/kassvl/istio-ambient-aiops-thesis) | Engineering thesis: ambient vs sidecar cost + reliability, AIOps closed loop | Python · Kubernetes |
+| [biometric-payment-infrastructure](https://github.com/kassvl/biometric-payment-infrastructure) | FinTech-grade Terraform IaC: EKS + Istio Ambient, PCI-DSS / GDPR / EU DORA mapped | Terraform · AWS |
+| [multi-cluster-istio-mesh](https://github.com/kassvl/multi-cluster-istio-mesh) | Two-cluster zero-trust mesh lab: strict mTLS, default-deny policies | Istio · Kind · Kiali |
+| [GitHealthCheck-CLI](https://github.com/kassvl/GitHealthCheck-CLI) | Offline Git repo auditor: 20+ quality metrics, single binary, zero network calls | Python |
+
+## Stack
 
 ```text
-languages       Python · TypeScript · Bash · HCL · SQL · YAML
-cloud           AWS (EKS, Aurora, WAF v2, IRSA, KMS) · OCI · Azure · GCP (lab)
-orchestration   Kubernetes 1.30 · Helm · Kustomize · Kind
-service mesh    Istio · Istio Ambient (ztunnel + waypoint) · Envoy
-iac             Terraform 1.9 · OpenTofu · Ansible
-ci / cd         GitHub Actions · GitLab CI · Argo CD · Flux · Jenkins
-observability   Prometheus · Grafana · Loki · Tempo · OpenTelemetry · Kiali
-security        mTLS · OPA · IRSA · External Secrets Operator
-                Checkov · tfsec · Trivy · Kyverno
-compliance      PCI-DSS v4.0 · GDPR / Schrems II · EU DORA · CIS · NIST 800-53
+languages       Go · Python · TypeScript · Bash · HCL
+cloud           AWS (EKS, Aurora, WAF v2, IRSA, KMS) · OCI · GCP (lab)
+orchestration   Kubernetes · Helm · Kind · kustomize
+service mesh    Istio · Istio Ambient (ztunnel + waypoint) · Envoy · Gateway API
+iac / gitops    Terraform · Argo CD · Flux · GitHub Actions · GitLab CI
+observability   Prometheus · PromQL · Grafana · Loki · Kiali
+security        mTLS · IRSA · External Secrets · Checkov · tfsec · Trivy
 ```
 
----
+## Background
 
-##  Featured Projects
-
-###  Secure Biometric Payment Infrastructure
-> FinTech-grade Terraform IaC modeled after a regulated European payment processor.
-
-- **7 Terraform 1.9 modules** across **2 AWS regions** (eu-central-1 primary + eu-west-1 DR)
-- **EKS 1.30 + Istio Ambient** (ztunnel + waypoint) — sidecar-less mTLS
-- **IRSA** + **External Secrets Operator** + **AWS Secrets Manager** — zero long-lived keys
-- **3 CI scanners** (Checkov + tfsec + Trivy) gate every PR — fail blocks merge
-- Compliance-mapped to **PCI-DSS v4.0, GDPR / Schrems II, EU DORA, CIS, NIST 800-53**
-
-[**View Repository →**](https://github.com/kassvl/biometric-payment-infrastructure)
-
-###  Multi-Cluster Istio Service Mesh
-> Two-cluster Kubernetes mesh simulating AWS + GCP locally on Kind.
-
-- Automatic **mTLS** verified via `istioctl x authz check`
-- **AuthorizationPolicy + PeerAuthentication** enforced cluster-wide
-- East-west gateway for true multi-cluster discovery **in roadmap**
-- **Kiali + Prometheus + Grafana** for golden-signal observability
-
-[**View Repository →**](https://github.com/kassvl/multi-cluster-istio-mesh)
-
-###  GitHealthCheck CLI
-> Audits Git repository health — 20+ quality metrics, single binary, zero network calls.
-
-- Stale branches, large files, commit hygiene, contributor patterns
-- SOLID / architecture pressure scoring without AST parsing
-- Designed for OSS maintainers and enterprise repos enforcing org-wide standards
-
-[**View Repository →**](https://github.com/kassvl/GitHealthCheck-CLI)
-
-###  GreenFleet — Renewable Energy Forecasting
-> FastAPI + Next.js 14 platform with 7-day ML forecasts.
-
-- Battery-storage simulation for distributed off-grid sites
-- Real-time telemetry ingestion + chart-grade dashboards
-- Container-ready, K8s-deployable
-
-[**View Repository →**](https://github.com/kassvl/Rxxxxx-GreenFleet)
+- B.Eng. Information Technology — WSB Merito Wrocław (2023 → 2027)
+- Engineering thesis: *Istio Ambient Mesh vs the sidecar pattern, with an AIOps closed-loop controller*
+- EPAM Cloud & DevOps Trainee (2026)
+- Oracle Cloud Infrastructure 2025 Foundations Associate
+- Turkish (native) · English (C1+) · Polish (A2–B1)
 
 ---
 
-##  Education & Certifications
-
-| | |
-|---|---|
-| 🎓 **B.Eng. — Information Technology** · WSB Merito Wrocław | Sep 2023 → Feb 2027 |
-| 💼 **EPAM Cloud & DevOps Trainee** · Wrocław | Feb 2026 – Apr 2026 |
-| 🏅 **Oracle Cloud Infrastructure 2025 Foundations Associate** | 2025 |
-| 🐧 **Introduction to Cloud Infrastructure (LFS151x)** · Linux Foundation | — |
-
-**Engineering thesis:** *"Multi-Cluster Resiliency with Istio Ambient Mesh — a sidecar-less service-mesh architecture with AIOps-driven failover."*
-
----
-
-##  Languages
-
-`Turkish (Native)` · `English (C1+, full professional)` · `Polish (A2, improving)`
-
----
-
-##  GitHub Stats
-
-<p align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=kassvl&theme=github_dark" alt="GitHub profile summary" width="100%" />
-</p>
-
-<p align="center">
-  <img height="180" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=kassvl&theme=github_dark" alt="Repos per language" />
-  <img height="180" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=kassvl&theme=github_dark" alt="Most commit language" />
-</p>
-
-<p align="center">
-  <img src="https://streak-stats.demolab.com?user=kassvl&theme=dark&hide_border=true&background=0D1117" alt="Contribution streak" />
-</p>
-
----
-
->  *Working student / internship inquiries welcome — Wrocław preferred, Warsaw / Kraków / Gdańsk / EU remote OK. Karta Pobytu holder, no sponsorship needed.*
-<!-- Profile views (optional, free counter) -->
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=kassvl&label=Profile%20views&color=8957e5&style=flat-square" alt="Profile views" />
-</p>
+> Working student / internship inquiries welcome — [kadirhanemre@proton.me](mailto:kadirhanemre@proton.me) · Wrocław preferred, EU remote OK.
