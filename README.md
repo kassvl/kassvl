@@ -5,7 +5,7 @@
 
 ```bash
 $ whoami
-kadirhan — cloud & devops engineer (in training)
+kadirhan — Full Stack Engineer (in training)
 
 $ cat /etc/motd
 Final-year IT student in Wrocław. EPAM Cloud & DevOps Trainee ('26).
