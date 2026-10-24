@@ -1,16 +1,23 @@
-[![Status](https://img.shields.io/badge/Status-Open%20to%20work%3A%20full--stack%20junior-2EA043?style=flat-square)](https://kadirhanemrememis.xyz)
-[![Location](https://img.shields.io/badge/Location-Wroc%C5%82aw%2C%20Poland-1F6FEB?style=flat-square)](https://kadirhanemrememis.xyz)
-[![Portfolio](https://img.shields.io/badge/Portfolio-kadirhanemrememis.xyz-0A0A0A?style=flat-square&logo=vercel&logoColor=white)](https://kadirhanemrememis.xyz)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-kadirhan--emre-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/kadirhan-emre)
+<a href="https://kadirhanemrememis.xyz"><img src="assets/hero.svg" width="100%" alt="Kadirhan Emre, Software Engineer. I build web products end to end: React and Next.js front ends, APIs in Python, TypeScript and Go, PostgreSQL, and the Docker, CI and cloud setup that ships them. Maintainer of Git Hospital. Wrocław, Poland."></a>
 
-### Hi, I'm Kadirhan
+<p>
+  <a href="https://kadirhanemrememis.xyz">kadirhanemrememis.xyz</a> &nbsp;|&nbsp;
+  <a href="https://linkedin.com/in/kadirhan-emre">LinkedIn</a> &nbsp;|&nbsp;
+  <a href="mailto:kadirhanemre@proton.me">kadirhanemre@proton.me</a>
+</p>
 
-Full-stack developer and final-year IT student in Wrocław. I build web apps end to end:
-React and Next.js front ends, APIs in Python (FastAPI) and TypeScript, PostgreSQL, and the
-Docker, CI and AWS setup that ships them. Paying clients in production since April 2026.
+<a href="https://github.com/Git-Hospital"><img src="assets/git-hospital.svg" width="100%" alt="Git Hospital: open-source tools that diagnose infrastructure and code, with the evidence for every diagnosis. An ambulance drives across and the name appears behind it."></a>
 
-Looking for a **full-stack internship or working-student role**, available now.
-Polish Karta Pobytu holder, no sponsorship needed in Poland.
+I founded [Git Hospital](https://github.com/Git-Hospital) and maintain it with [Ege Zambelli](https://github.com/egezamb).
+Every tool follows one rule: a finding is reported only when the tool can show how it got there, and
+"could not check" is a separate answer from "healthy".
+
+| Tool | What it does | Status |
+| --- | --- | --- |
+| [Helmbulance](https://github.com/Git-Hospital/helmbulance) | Installs a Helm chart on a throwaway kind cluster and runs day-2 scenarios: upgrades, reinstalls, Secret rotation, network isolation | pre-release |
+| [MeshMedic](https://github.com/Git-Hospital/meshmedic) | Matches Istio's Prometheus telemetry against reviewed failure scenarios and opens a GitOps pull request with the diagnosis, evidence and rollback plan | v1.0.0 |
+| [boards](https://github.com/Git-Hospital/boards) | Benchmark for diagnosis tools: known defects, clean twins and hand-verified values, scored by applying the fix | in development |
+| [GitHealthCheck](https://github.com/Git-Hospital/githealthcheck) | Code health analyzer: tests, history, complexity. Every number is a measurement, or null with a reason | Go rewrite in progress |
 
 ## Shipped for clients
 
@@ -28,47 +35,38 @@ Polish Karta Pobytu holder, no sponsorship needed in Poland.
       <a href="https://loomr.net"><img src="https://kadirhanemrememis.xyz/projects/loomr.jpg" alt="LOOMR showroom" /></a>
       <br />
       <b>LOOMR</b>, live at <a href="https://loomr.net">loomr.net</a><br />
-      Website for a fashion and textile design studio: a scroll-driven film intro, a showroom you
-      walk through, and a garment configurator with live pricing.<br />
+      Website for a fashion and textile design studio: a showroom you walk through and a garment
+      configurator with live pricing.<br />
       <sub>Next.js 16, React 19, TypeScript, Canvas, Vercel</sub>
     </td>
   </tr>
 </table>
 
-## Team products (private repos, happy to walk through the code)
+## Work
 
-| project | what I did | built with |
+| Where | What I do |
+| --- | --- |
+| **Bluesense** (Boston, remote) | iOS app in Swift and SwiftUI: session, checkout and cart fixes, release tooling, and GitHub automation for a team of about 30 |
+| **[Nordstjernen](https://github.com/nordstjernen-web/nordstjernen-browser)** | Core contributor to an open-source browser engine in C: 200+ commits, made Google Search and Gmail sign-in work, reported a [HarfBuzz bug](https://github.com/harfbuzz/harfbuzz/issues/6320) fixed the same day |
+| **BirthdayMessaging** (UK, remote) | Security scanning of a production messaging platform with OWASP ZAP, Burp Suite and nmap |
+| **EPAM Systems** (Wrocław) | Cloud and DevOps program: CI/CD in GitHub Actions and Jenkins, Terraform on AWS and Azure, Kubernetes, Prometheus and Grafana |
+
+### Team products (private repos, happy to walk through the code)
+
+| Project | What I did | Built with |
 |---|---|---|
 | **EmlakPlus** | Largest contributor (team of 4) to a CRM for real-estate agencies: listings, clients, map search, scheduled social posts | FastAPI, Next.js, PostgreSQL, Redis, Celery, Terraform |
-| **data-stock** | REST API and admin web of an inventory SaaS that logs stock by barcode and syncs Amazon, Allegro and eBay listings (team of 4) | FastAPI, Alembic, React, Vite, Playwright |
-| **Vantage** | TypeScript API of an Instagram analytics app: Graph API login, ad-supported free tier, Fly.io deploys (team of 3) | Node.js, TypeScript, Docker, Fly.io |
-
-## Open source and research
-
-| repo | what it is |
-|---|---|
-| [meshmedic](https://github.com/kassvl/meshmedic) | Go tool that turns Istio service-mesh alerts into reviewed fix pull requests |
-| [mesh-incidents-bench](https://github.com/kassvl/mesh-incidents-bench) | Reproducible mesh failure scenarios with ground truth, used to score MeshMedic honestly |
-| [istio-ambient-aiops-thesis](https://github.com/kassvl/istio-ambient-aiops-thesis) | Engineering thesis: Istio Ambient vs the sidecar pattern, with a self-healing controller |
-| [biometric-payment-infrastructure](https://github.com/kassvl/biometric-payment-infrastructure) | Two-region AWS reference architecture in Terraform with CI security gates |
+| **data-stock** | REST API and admin web of an inventory SaaS that logs stock by barcode and syncs Amazon, Allegro and eBay listings | FastAPI, Alembic, React, Vite, Playwright |
+| **Vantage** | TypeScript API of an Instagram analytics app: Graph API login, ad-supported free tier, Fly.io deploys | Node.js, TypeScript, Docker, Fly.io |
 
 ## Stack
 
 ```text
-frontend   React, Next.js, TypeScript, Tailwind CSS, Framer Motion, Vite
-backend    Python (FastAPI, Celery), Node.js (NestJS, Express), REST, JWT/OAuth
+frontend   React, Next.js, TypeScript, Tailwind CSS, Framer Motion, Vite, React Native
+backend    Python (FastAPI, Celery), Node.js (NestJS, Express), Go, REST, JWT/OAuth
 data       PostgreSQL, Redis, SQLAlchemy + Alembic
-testing    pytest, Vitest, Playwright, Jest
-shipping   Docker, GitHub Actions, Vercel, Fly.io, AWS, Terraform, Linux
+testing    pytest, Vitest, Playwright, Jest, go test
+platform   Docker, Kubernetes, Helm, Istio, GitHub Actions, Terraform, AWS, Vercel, Fly.io, Linux
 ```
 
-## Background
-
-- B.Eng. Information Technology, WSB Merito Wrocław, graduating February 2027
-- EPAM Cloud & DevOps Trainee, Feb to Apr 2026
-- Oracle Cloud Infrastructure 2025 Foundations Associate
-- Turkish (native), English (C1+), Polish (A2-B1)
-
----
-
-> Internship and working-student inquiries welcome: [kadirhanemre@proton.me](mailto:kadirhanemre@proton.me)
+<sub>B.Eng. Information Technology, WSB Merito Wrocław · Oracle Cloud Infrastructure 2025 Foundations Associate · Turkish, English (C1+), Polish (A2-B1)</sub>
