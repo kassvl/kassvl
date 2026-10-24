@@ -164,8 +164,22 @@ def orbit(cx, cy) -> str:
     return "\n".join(out)
 
 
+def contact_icon(kind, x, cy) -> str:
+    """16 px line icons, vertically centred on cy."""
+    st = f'fill="none" stroke="{RED}" stroke-width="1.6"'
+    if kind == "web":
+        return (f'<circle cx="{x + 8}" cy="{cy}" r="7.5" {st}/><ellipse cx="{x + 8}" cy="{cy}" rx="3.2" ry="7.5" {st}/>'
+                f'<line x1="{x + .5}" y1="{cy}" x2="{x + 15.5}" y2="{cy}" {st}/>')
+    if kind == "in":
+        return (f'<rect x="{x}" y="{cy - 8}" width="16" height="16" rx="3" fill="{RED}"/>'
+                f'<text x="{x + 8}" y="{cy + 4.5}" text-anchor="middle" '
+                f'style="font: 500 11px \'Mono\', monospace; fill: {BG}">in</text>')
+    return (f'<rect x="{x}" y="{cy - 6}" width="16" height="12" rx="2" {st}/>'
+            f'<path d="M{x + 1} {cy - 5} L{x + 8} {cy + 1} L{x + 15} {cy - 5}" {st}/>')
+
+
 def hero() -> str:
-    W, H = 1200, 470
+    W, H = 1200, 516
     cx, cy = 958, 235
     kicker = "kassvl  /  Wrocław, PL"
     name = "Kadirhan Emre"
@@ -177,11 +191,14 @@ def hero() -> str:
         "that ships them. Maintainer of Git Hospital.",
     ]
     stack = "TypeScript  React  Next.js  Python  FastAPI  Go  PostgreSQL  Docker  Kubernetes  AWS"
+    contacts = [("web", "kadirhanemrememis.xyz"), ("in", "linkedin.com/in/kadirhan-emre"),
+                ("mail", "kadirhanemre@proton.me")]
     fonts = build_fonts({
-        "display": name, "sans5": role, "sans4": "".join(para), "mono": kicker + stack,
+        "display": name, "sans5": role, "sans4": "".join(para), "mono": kicker + stack + "in" + "".join(c for _, c in contacts),
     })
     css = fonts + COMMON_CSS + f"""
 .spin {{ transform-origin: {cx}px {cy}px; animation: spin linear infinite; }}
+.contact {{ fill: {INK200}; }}
 .beat {{ transform-origin: {cx}px {cy}px; animation: beat 1.6s ease-in-out infinite; }}
 @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
 @keyframes beat {{ 0%, 60%, 100% {{ transform: scale(1); }} 15% {{ transform: scale(1.22); }} 30% {{ transform: scale(.94); }} 42% {{ transform: scale(1.12); }} }}
@@ -202,8 +219,14 @@ def hero() -> str:
         body.append(text(70, 298 + 30 * k, "body rise", line, style=f"animation-delay:{.8 + .08 * k:.2f}s"))
     body.append(f'<line x1="70" y1="418" x2="{W - 70}" y2="418" stroke="{BORDER}"/>')
     body.append(text(70, 446, "mono rise", stack.replace("  ", "  ·  "), style="animation-delay:1.3s"))
+    x = 70
+    for k, (icon, value) in enumerate(contacts):
+        body.append(f'<g class="rise" style="animation-delay:{1.4 + .1 * k:.1f}s">{contact_icon(icon, x, 478)}'
+                    + text(x + 26, 484, "mono contact", value) + "</g>")
+        x += 26 + 9.3 * len(value) + 44
     body.append("</g>")
-    label = (f"{name}, {role}. " + " ".join(para) + " Stack: " + stack.replace("  ", ", ") + ".")
+    label = (f"{name}, {role}. " + " ".join(para) + " Stack: " + stack.replace("  ", ", ") + ". "
+             + " | ".join(c for _, c in contacts))
     return svg(W, H, label, css, "\n".join(body))
 
 

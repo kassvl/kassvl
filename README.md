@@ -1,10 +1,4 @@
-<a href="https://kadirhanemrememis.xyz"><img src="assets/hero.svg" width="100%" alt="Kadirhan Emre, Software Engineer. I build web products end to end: React and Next.js front ends, APIs in Python, TypeScript and Go, PostgreSQL, and the Docker, CI and cloud setup that ships them. Maintainer of Git Hospital. Wrocław, Poland."></a>
-
-<p>
-  <a href="https://kadirhanemrememis.xyz">kadirhanemrememis.xyz</a> &nbsp;|&nbsp;
-  <a href="https://linkedin.com/in/kadirhan-emre">LinkedIn</a> &nbsp;|&nbsp;
-  <a href="mailto:kadirhanemre@proton.me">kadirhanemre@proton.me</a>
-</p>
+<a href="https://kadirhanemrememis.xyz"><img src="assets/hero.svg" width="100%" alt="Kadirhan Emre, Software Engineer. I build web products end to end: React and Next.js front ends, APIs in Python, TypeScript and Go, PostgreSQL, and the Docker, CI and cloud setup that ships them. Maintainer of Git Hospital. Wrocław, Poland. Contact: kadirhanemrememis.xyz, linkedin.com/in/kadirhan-emre, kadirhanemre@proton.me."></a>
 
 <a href="https://github.com/Git-Hospital"><img src="assets/git-hospital.svg" width="100%" alt="Git Hospital: open-source tools that diagnose infrastructure and code, with the evidence for every diagnosis. An ambulance drives across and the name appears behind it."></a>
 
