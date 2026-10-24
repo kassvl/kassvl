@@ -188,7 +188,7 @@ def hero() -> str:
         "I build web products end to end: React and Next.js",
         "front ends, APIs in Python, TypeScript and Go,",
         "PostgreSQL, and the Docker, CI and cloud setup",
-        "that ships them. Maintainer of Git Hospital.",
+        "that ships them. Maintainer of Git Hospital and Nordstjernen.",
     ]
     stack = "TypeScript  React  Next.js  Python  FastAPI  Go  PostgreSQL  Docker  Kubernetes  AWS"
     contacts = [("web", "kadirhanemrememis.xyz"), ("in", "linkedin.com/in/kadirhan-emre"),

@@ -1,4 +1,4 @@
-<a href="https://kadirhanemrememis.xyz"><img src="assets/hero.svg" width="100%" alt="Kadirhan Emre, Software Engineer. I build web products end to end: React and Next.js front ends, APIs in Python, TypeScript and Go, PostgreSQL, and the Docker, CI and cloud setup that ships them. Maintainer of Git Hospital. Wrocław, Poland. Contact: kadirhanemrememis.xyz, linkedin.com/in/kadirhan-emre, kadirhanemre@proton.me."></a>
+<a href="https://kadirhanemrememis.xyz"><img src="assets/hero.svg" width="100%" alt="Kadirhan Emre, Software Engineer. I build web products end to end: React and Next.js front ends, APIs in Python, TypeScript and Go, PostgreSQL, and the Docker, CI and cloud setup that ships them. Maintainer of Git Hospital and Nordstjernen. Wrocław, Poland. Contact: kadirhanemrememis.xyz, linkedin.com/in/kadirhan-emre, kadirhanemre@proton.me."></a>
 
 <a href="https://github.com/Git-Hospital"><img src="assets/git-hospital.svg" width="100%" alt="Git Hospital: open-source tools that diagnose infrastructure and code, with the evidence for every diagnosis. An ambulance drives across and the name appears behind it."></a>
 
@@ -37,7 +37,7 @@
 | Where | What I do |
 | --- | --- |
 | **Bluesense** (Boston, remote) | iOS app in Swift and SwiftUI: session, checkout and cart fixes, release tooling, and GitHub automation for a team of about 30 |
-| **[Nordstjernen](https://github.com/nordstjernen-web/nordstjernen-browser)** | Core contributor to an open-source browser engine in C: 200+ commits, made Google Search and Gmail sign-in work, reported a [HarfBuzz bug](https://github.com/harfbuzz/harfbuzz/issues/6320) fixed the same day |
+| **[Nordstjernen](https://github.com/nordstjernen-web/nordstjernen-browser)** | Maintainer of an open-source browser engine in C: 200+ commits, made Google Search and Gmail sign-in work, reported a [HarfBuzz bug](https://github.com/harfbuzz/harfbuzz/issues/6320) fixed the same day |
 | **BirthdayMessaging** (UK, remote) | Security scanning of a production messaging platform with OWASP ZAP, Burp Suite and nmap |
 
 ### Team products (private repos, happy to walk through the code)
