@@ -280,12 +280,66 @@ def ambulance() -> str:
     ])
 
 
+def city(x0, x1, road, avoid) -> str:
+    """Night skyline with lit windows; deterministic so rebuilds give the same city."""
+    import random
+    rnd = random.Random(7)
+    out, x = [], x0
+    while x < x1:
+        w = rnd.choice((54, 66, 78, 90))
+        h = rnd.randint(58, 96)
+        top = road - h
+        out.append(f'<rect x="{x}" y="{top}" width="{w - 6}" height="{h}" fill="#211b17"/>')
+        for wy in range(top + 10, road - 12, 14):
+            for wx in range(x + 8, x + w - 14, 12):
+                if avoid[0] < wx < avoid[2] and avoid[1] < wy < avoid[3]:
+                    continue
+                r = rnd.random()
+                if r < .26:
+                    col = AMBER if r < .2 else "#cfe3ff"
+                    cls = ' class="flicker"' if rnd.random() < .08 else ""
+                    out.append(f'<rect{cls} x="{wx}" y="{wy}" width="5" height="7" fill="{col}" fill-opacity="{.25 + rnd.random() * .3:.2f}"/>')
+        x += w
+    return "".join(out)
+
+
+def street_lamp(x, road) -> str:
+    return (f'<path d="M{x - 70} {road} L{x - 8} 98 L{x + 8} 98 L{x + 70} {road} Z" fill="url(#lamp)"/>'
+            f'<line x1="{x + 22}" y1="{road}" x2="{x + 22}" y2="92" stroke="#3a2f28" stroke-width="3"/>'
+            f'<path d="M{x + 22} 92 Q{x + 22} 84 {x + 12} 86 L{x} 90" fill="none" stroke="#3a2f28" stroke-width="3"/>'
+            f'<rect x="{x - 9}" y="89" width="16" height="6" rx="2" fill="{AMBER}"/>')
+
+
+def hospital(road) -> str:
+    """Hospital with an emergency bay; the bay opening is x 150-240."""
+    wins = "".join(
+        f'<rect x="{wx}" y="{wy}" width="9" height="7" fill="#cfe3ff" fill-opacity="{.22 + ((wx * 7 + wy) % 5) * .07:.2f}"/>'
+        for wy in (56, 70) for wx in range(116, 236, 16)
+    )
+    return "".join([
+        f'<rect x="40" y="44" width="210" height="{road - 44}" fill="#2a221d"/>',
+        f'<rect x="40" y="44" width="210" height="4" fill="#3a2f28"/>',
+        wins,
+        # lit cross on the facade
+        f'<circle cx="78" cy="74" r="30" fill="url(#crossglow)" class="buzz"/>',
+        f'<rect x="72" y="58" width="12" height="32" rx="2" fill="{RED}"/><rect x="62" y="68" width="32" height="12" rx="2" fill="{RED}"/>',
+        # emergency sign and bay
+        f'<rect x="146" y="80" width="98" height="14" rx="2" fill="{RED}" class="buzz"/>',
+        f'<text x="195" y="91" text-anchor="middle" style="font: 500 10px \'Mono\', monospace; fill: {INK50}; letter-spacing: 1.5px">EMERGENCY</text>',
+        f'<rect x="150" y="97" width="90" height="{road - 97}" fill="url(#bay)"/>',
+        f'<rect x="150" y="97" width="90" height="4" fill="#3a2f28"/>',
+        f'<rect x="58" y="128" width="70" height="{road - 128}" fill="#1b1714"/>',
+        f'<line x1="93" y1="128" x2="93" y2="{road}" stroke="#3a2f28"/>',
+    ])
+
+
 def git_hospital() -> str:
     W, H = 1200, 400
-    road, park = 182, 640  # road line; where the ambulance stands when motion is off
+    road, park = 182, 700  # road line; where the ambulance stands when motion is off
+    bay = 150              # left edge of the emergency bay
+    tx = 292               # title x
     title = "Git Hospital"
     url = "github.com/Git-Hospital"
-    kicker = "// founder and maintainer"
     lead = "Open-source tools that diagnose infrastructure and code, with the evidence for every diagnosis."
     tools = [
         ("helmbulance", "Helm chart day-2 tests"),
@@ -293,32 +347,42 @@ def git_hospital() -> str:
         ("boards", "scores diagnosis tools"),
         ("githealthcheck", "code health, measured"),
     ]
-    mono = url + kicker + "".join(a + b for a, b in tools)
+    mono = url + "".join(a + b for a, b in tools) + "EMERGENCY"
     fonts = build_fonts({"display": title, "sans4": lead, "mono": mono})
-    start, stop = -260 - park, W + 120 - park
+    start, stop = bay - 210 - park, W + 120 - park
     css = fonts + COMMON_CSS + f"""
-.gh-title {{ font: 600 68px 'Display', Georgia, serif; fill: {INK50}; letter-spacing: -1px; }}
+.gh-title {{ font: 600 68px 'Display', Georgia, serif; fill: {INK50}; letter-spacing: -1px;
+            paint-order: stroke; stroke: {SURFACE}; stroke-width: 10px; stroke-linejoin: round; }}
 .lead {{ font: 400 20px 'Sans', 'Helvetica Neue', Arial, sans-serif; fill: {INK200}; }}
 .tool {{ font: 500 17px 'Mono', 'SFMono-Regular', Menlo, Consolas, monospace; fill: {INK50}; }}
-.drive {{ animation: drive 9s cubic-bezier(.35,0,.65,1) infinite; }}
+.drive {{ animation: drive 9s cubic-bezier(.4,0,.7,1) infinite; }}
 .titlefade {{ animation: titlefade 9s linear infinite; }}
 .wheel {{ transform-box: fill-box; transform-origin: center; animation: spin .45s linear infinite; }}
 .flash {{ animation: flash .5s steps(1) infinite; }}
 .fb {{ animation-delay: .25s; }}
 .wave {{ transform-box: fill-box; transform-origin: center; opacity: 0; animation: wave 1.35s ease-out infinite; }}
 .speed {{ animation: speed .5s ease-in-out infinite alternate; }}
-@keyframes drive {{ 0% {{ transform: translateX({start}px); }} 48%, 100% {{ transform: translateX({stop}px); }} }}
-@keyframes titlefade {{ 0%, 86% {{ opacity: 1; }} 94%, 100% {{ opacity: 0; }} }}
+.flicker {{ animation: flicker 3.7s steps(1) infinite; }}
+.buzz {{ animation: buzz 4.3s steps(1) infinite; }}
+@keyframes drive {{ 0%, 10% {{ transform: translateX({start}px); }} 56%, 100% {{ transform: translateX({stop}px); }} }}
+@keyframes titlefade {{ 0%, 88% {{ opacity: 1; }} 96%, 100% {{ opacity: 0; }} }}
 @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
 @keyframes flash {{ 0% {{ opacity: 1; }} 50% {{ opacity: .12; }} }}
 @keyframes wave {{ 0% {{ opacity: .9; transform: scale(.5); }} 100% {{ opacity: 0; transform: scale(2.6); }} }}
 @keyframes speed {{ from {{ opacity: .15; }} to {{ opacity: .7; }} }}
+@keyframes flicker {{ 0%, 70% {{ opacity: 1; }} 72% {{ opacity: .2; }} 76%, 100% {{ opacity: 1; }} }}
+@keyframes buzz {{ 0%, 90% {{ opacity: 1; }} 91% {{ opacity: .55; }} 93% {{ opacity: 1; }} 95% {{ opacity: .7; }} 96%, 100% {{ opacity: 1; }} }}
 @media (prefers-reduced-motion: reduce) {{ .wave, .speed {{ opacity: 0 !important; }} }}
 """ + REDUCED
     defs = (
         f'<defs><clipPath id="trail"><rect class="drive" x="{park - 2400}" y="0" width="2400" height="{road + 10}"/></clipPath>'
+        # the ambulance is visible inside the bay opening and anywhere right of the building
+        f'<clipPath id="street"><rect x="{bay}" y="101" width="100" height="{road - 101 + 20}"/><rect x="250" y="0" width="{W}" height="{H}"/></clipPath>'
         f'<radialGradient id="glow-r"><stop offset="0" stop-color="{RED}" stop-opacity=".75"/><stop offset="1" stop-color="{RED}" stop-opacity="0"/></radialGradient>'
         f'<radialGradient id="glow-b"><stop offset="0" stop-color="{BLUE}" stop-opacity=".75"/><stop offset="1" stop-color="{BLUE}" stop-opacity="0"/></radialGradient>'
+        f'<radialGradient id="crossglow"><stop offset="0" stop-color="{RED}" stop-opacity=".55"/><stop offset="1" stop-color="{RED}" stop-opacity="0"/></radialGradient>'
+        f'<linearGradient id="bay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{AMBER}" stop-opacity=".35"/><stop offset=".5" stop-color="#120f0d"/><stop offset="1" stop-color="#0c0a09"/></linearGradient>'
+        f'<linearGradient id="lamp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{AMBER}" stop-opacity=".22"/><stop offset="1" stop-color="{AMBER}" stop-opacity="0"/></linearGradient>'
         f'<linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{AMBER}" stop-opacity=".45"/><stop offset="1" stop-color="{AMBER}" stop-opacity="0"/></linearGradient></defs>'
     )
     body = [
@@ -326,24 +390,29 @@ def git_hospital() -> str:
         '<g clip-path="url(#frame)">',
         f'<rect width="{W}" height="{H}" fill="{SURFACE}"/>',
         f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
-        f'<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="18" fill="none" stroke="{BORDER}"/>',
-        text(70, 54, "mono rise", kicker),
-        text(W - 70, 54, "mono rise", url, text_anchor="end"),
-        f'<line x1="0" y1="{road}" x2="{W}" y2="{road}" stroke="{INK600}" stroke-opacity=".7" stroke-dasharray="22 16"/>',
+        f'<circle cx="1062" cy="64" r="15" fill="{INK200}" fill-opacity=".85"/><circle cx="1069" cy="59" r="13" fill="{SURFACE}"/>',
+        city(262, W, road, (tx - 10, 96, tx + 420, 172)),
+        street_lamp(760, road), street_lamp(1070, road),
+        hospital(road),
+        f'<rect x="0" y="{road}" width="{W}" height="12" fill="#100d0b"/>',
+        f'<line x1="0" y1="{road}" x2="{W}" y2="{road}" stroke="{INK600}" stroke-opacity=".8"/>',
+        f'<line x1="250" y1="{road + 6}" x2="{W}" y2="{road + 6}" stroke="{INK600}" stroke-opacity=".6" stroke-dasharray="22 16"/>',
+        text(W - 70, 40, "mono rise", url, text_anchor="end"),
         # the name is painted only where the ambulance has already been
-        f'<g clip-path="url(#trail)"><g class="titlefade">{text(66, 160, "gh-title", title)}</g></g>',
-        f'<g transform="translate({park} {road})"><g class="drive">{ambulance()}</g></g>',
-        text(70, 236, "lead rise", lead, style="animation-delay:.3s"),
-        f'<line x1="70" y1="282" x2="{W - 70}" y2="282" stroke="{BORDER}"/>',
+        f'<g clip-path="url(#trail)"><g class="titlefade">{text(tx, 160, "gh-title", title)}</g></g>',
+        f'<g clip-path="url(#street)"><g transform="translate({park} {road})"><g class="drive">{ambulance()}</g></g></g>',
+        text(70, 238, "lead rise", lead, style="animation-delay:.3s"),
+        f'<line x1="70" y1="276" x2="{W - 70}" y2="276" stroke="{BORDER}"/>',
     ]
     col = (W - 140) / 4
     for k, (name, desc) in enumerate(tools):
         x = 70 + k * col
         d = f"animation-delay:{.5 + .1 * k:.1f}s"
-        body.append(text(x, 324, "tool rise", name, style=d))
-        body.append(text(x, 352, "mono rise", desc, style=d))
+        body.append(text(x, 318, "tool rise", name, style=d))
+        body.append(text(x, 346, "mono rise", desc, style=d))
     body.append("</g>")
-    label = f"{title}: {lead} Tools: " + "; ".join(f"{a}, {b}" for a, b in tools) + "."
+    label = (f"{title}: {lead} An ambulance drives out of a hospital's emergency bay and the name appears behind it. "
+             "Tools: " + "; ".join(f"{a}, {b}" for a, b in tools) + ".")
     return svg(W, H, label, css, "\n".join(body))
 
 

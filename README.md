@@ -2,10 +2,6 @@
 
 <a href="https://github.com/Git-Hospital"><img src="assets/git-hospital.svg" width="100%" alt="Git Hospital: open-source tools that diagnose infrastructure and code, with the evidence for every diagnosis. An ambulance drives across and the name appears behind it."></a>
 
-I founded [Git Hospital](https://github.com/Git-Hospital) and maintain it with [Ege Zambelli](https://github.com/egezamb).
-Every tool follows one rule: a finding is reported only when the tool can show how it got there, and
-"could not check" is a separate answer from "healthy".
-
 | Tool | What it does | Status |
 | --- | --- | --- |
 | [Helmbulance](https://github.com/Git-Hospital/helmbulance) | Installs a Helm chart on a throwaway kind cluster and runs day-2 scenarios: upgrades, reinstalls, Secret rotation, network isolation | pre-release |
@@ -43,7 +39,6 @@ Every tool follows one rule: a finding is reported only when the tool can show h
 | **Bluesense** (Boston, remote) | iOS app in Swift and SwiftUI: session, checkout and cart fixes, release tooling, and GitHub automation for a team of about 30 |
 | **[Nordstjernen](https://github.com/nordstjernen-web/nordstjernen-browser)** | Core contributor to an open-source browser engine in C: 200+ commits, made Google Search and Gmail sign-in work, reported a [HarfBuzz bug](https://github.com/harfbuzz/harfbuzz/issues/6320) fixed the same day |
 | **BirthdayMessaging** (UK, remote) | Security scanning of a production messaging platform with OWASP ZAP, Burp Suite and nmap |
-| **EPAM Systems** (Wrocław) | Cloud and DevOps program: CI/CD in GitHub Actions and Jenkins, Terraform on AWS and Azure, Kubernetes, Prometheus and Grafana |
 
 ### Team products (private repos, happy to walk through the code)
 
