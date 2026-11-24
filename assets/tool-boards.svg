@@ -20,8 +20,8 @@ svg { --bg: #0c0a09; --raised: #171310; --border: #3a2f28; --strong: #f4ece2; --
 </style>
 <rect class="shell" x=".5" y=".5" width="1199" height="123" rx="18"/>
 <text class="n" x="40" y="54">boards</text>
-<text class="s" x="350" y="54">Benchmark for diagnosis tools: known defects, clean twins</text>
-<text class="s" x="350" y="84">and hand-verified values, scored by applying the fix</text>
+<text class="s" x="350" y="54">Benchmark for diagnosis tools: known defects, clean twins and</text>
+<text class="s" x="350" y="84">hand-verified values, scored by applying the fix</text>
 <rect class="pill" x="997.6" y="33.0" width="162.4" height="30" rx="15"/>
 <text class="db" x="1078.8" y="53" text-anchor="middle">in development</text>
 </svg>

@@ -67,35 +67,46 @@ Card: radius 18 (as the banners), 1 unit border, 40 units side padding, 30 top a
 
 ## Vitals card
 
-The trace is a real chart. X is the 53 weeks ending this week, Y is contributions that week on
-a linear scale from zero. Each week is drawn as one heartbeat: a short dip, a spike to the
-week's value, a short undershoot, back to the baseline. A week with no contributions is flat.
-Month names sit under the baseline. The highest week carries its value as a label.
+The trace is a real chart. X is the 53 weeks ending this week, Y is contributions that week.
+Each week is one heartbeat: a short dip, a spike to the week's value, a short undershoot, back
+to the baseline; a week with no contributions is flat. Scale: linear from zero up to a ceiling
+that is the second-highest week rounded up to the next 50 (a single outlier must not flatten
+the rest). A week above the ceiling is drawn to the top edge with a break mark (two short
+parallel slashes across the spike) and its real value beside it, without a word. Two faint
+dotted reference lines with small data-type labels at the left edge sit at round steps below
+the ceiling. The alt text states the ceiling and the clipped value. Month names sit under the
+baseline (every second one on phones).
 
-Dark theme: a monitor. Faint dot grid, vital-red trace with a soft glow. Light theme: ECG
-paper. Fine red grid (small squares at 8% opacity, every fifth line at 16%), trace in strong
-ink. Motion: the trace draws once from left to right in about 2.4 seconds, then a dot at the
-current week pulses. Nothing else moves. `prefers-reduced-motion` shows the finished trace.
+No framed box inside the card: baseline, reference lines and trace are drawn straight on the
+card. Dark: faint dot grid, vital-red trace (2 units, round joins) with a soft glow. Light: ECG
+paper (small squares at 8% opacity, every fifth line 16%) as a plain rectangle without outline
+or radius, trace in strong ink. Motion: the trace draws once left to right in about 2.4
+seconds, then a dot at the current week pulses. `prefers-reduced-motion` shows the finished trace.
 
-Readouts, right of the trace on desktop and under it on phones:
+Size: desktop plot region about 250 units high, card about 360; phone plot about 170.
 
-- contributions in the last 12 months
-- pull requests merged in public repositories outside my own account
-- pull request reviews given
+Readouts, right of the trace on desktop (x 812 to 1160, one line per label) and under it on
+phones (rows of equal height: numeral in a 160-unit column, label right of it on at most two
+lines):
 
-Under the readouts, in data type: active days, longest streak, and `updated YYYY-MM-DD from
-the GitHub API`. The date is the day the numbers last changed, so a day without changes makes
-no commit.
+- `contributions, last 12 months`
+- `pull requests merged in public repos` (precisely: in public repositories outside my own
+  account; the alt text says so)
+- `pull request reviews given`
+
+Under the readouts, in data type and never wrapped: `129 active days`, `longest streak 21 days`.
+`updated YYYY-MM-DD from the GitHub API` sits bottom left under the month labels on desktop
+and on the last line of the card on phones. The date is the day the numbers last changed.
 
 ## Rows
 
 One component, three uses. Desktop: name column (x 40 to 330), sentence column (x 350 to 930),
-state column right-aligned at 1160. Phone: name, then sentence at full width, then state.
+state column right-aligned at 1160. On tool rows the sentence column ends 40 units left of the pill. Phone: name, then sentence at full width, then state.
 Sentences wrap by measured glyph advances (fontTools), never by character count.
 
 - Tool row: name, the README's description, status text in an outlined pill.
 - Open source row: owner in muted data type above the repository name, star count; the title
-  of the latest merged pull request (one line, cut with an ellipsis by measurement) and its
+  of the latest merged pull request (one line on desktop, at most two on phones, cut with an ellipsis by measurement) and its
   date; right: merged count with a merged-colored dot, and the in-review count with an
   in-review-colored dot when it is not zero.
 - Work and team cards: rows inside one card, separated by a border-colored hairline; team

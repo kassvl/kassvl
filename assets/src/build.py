@@ -325,7 +325,15 @@ def _hero_phone_body(W, cx, cy, kicker, name, role, para, stack, contacts):
     y += 14
     body.append(f'<line x1="{px}" y1="{y:.0f}" x2="{W - px}" y2="{y:.0f}" stroke="{BORDER}"/>')
     y += 34
-    for line in wrap("mono", stack.replace("  ", "  ·  "), 15, width, .3):
+    sep, cur, rows = "  ·  ", "", []
+    for item in stack.split("  "):          # break between items, never next to a separator
+        trial = cur + sep + item if cur else item
+        if cur and measure("mono", trial, 15, .3) > width:
+            rows.append(cur)
+            cur = item
+        else:
+            cur = trial
+    for line in rows + [cur]:
         body.append(text(px, y, "mono rise", line, style="animation-delay:1.3s"))
         y += 26
     y += 12
@@ -637,7 +645,7 @@ def row_tool(c, y, r, phone):
         pill(c, PAD, top + 21, r["status"])
         return top + 30 + PT - y
     pw = measure("mono", r["status"], 16) + 28
-    right = min(930, c.W - PAD - pw - 24)
+    right = c.W - PAD - pw - 40
     last = lines_at(c, 350, base, "s", wrap("sans", r["desc"], 20, right - 350))
     pill(c, None, base, r["status"])
     return last + 10 + PT - y
@@ -676,15 +684,20 @@ def row_os(c, y, r, phone):
             last = lines_at(c, PAD, base, "st", wrap("sans", r["sentence"], 20, c.W - 2 * PAD))
             pill(c, PAD, last + 43, r["state"])
             return last + 43 + 9 + PT - y
+        last = base - 30
         if r.get("title"):
-            c.t(PAD, base, "st", ellipsize("sans", r["title"], 20, c.W - 2 * PAD))
-            c.t(PAD, base + 28, "d", f"merged {r['date']}")
+            ls = wrap("sans", r["title"], 20, c.W - 2 * PAD)
+            if len(ls) > 2:   # at most two lines, the ellipsis ends the second
+                ls = [ls[0], ellipsize("sans", " ".join(ls[1:]), 20, c.W - 2 * PAD)]
+            last = lines_at(c, PAD, base, "st", ls)
+            c.t(PAD, last + 28, "d", f"merged {r['date']}")
+            last += 28
         x = PAD
         for dot, label in _counts(r):
-            c.add(f'<circle class="{dot}" cx="{x + 5}" cy="{base + 64.5}" r="5"/>')
-            c.t(x + 18, base + 70, "db", label)
+            c.add(f'<circle class="{dot}" cx="{x + 5}" cy="{last + 36.5}" r="5"/>')
+            c.t(x + 18, last + 42, "db", label)
             x += 18 + measure("mono", label, 16) + 26
-        return base + 70 + 8 + PT - y
+        return last + 42 + 8 + PT - y
     if static:
         c.t(350, L2, "st", r["sentence"])
         pill(c, None, L2, r["state"])
@@ -743,49 +756,65 @@ def rows_card(rows, phone, theme, label):
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 
 
-def week_points(weeks, x0, step, base, top):
-    """One heartbeat per week. The spike apex is linear in the week's value from zero."""
-    peak = max(w["count"] for w in weeks) or 1
+def scale_for(weeks):
+    """Ceiling = second-highest week rounded up to the next 50 (at least 50) and the reference-line step."""
+    counts = sorted((w["count"] for w in weeks), reverse=True)
+    second = counts[1] if len(counts) > 1 else counts[0]
+    ceiling = max(50, math.ceil(second / 50) * 50)
+    step = next(s for s in (10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000) if ceiling / s <= 3.5)
+    return ceiling, step
+
+
+def week_points(weeks, x0, step, base, top, ceiling):
+    """One heartbeat per week; apex height is linear in the count from zero up to the ceiling,
+    a week above it is drawn to the top edge."""
     span = base - top
     pts, apexes = [(x0, base)], {}
     for i, w in enumerate(weeks):
         a = x0 + i * step
-        h = w["count"] / peak * span
+        h = min(w["count"], ceiling) / ceiling * span
         if h > 0:
             dip, und = min(.12 * h, 9), min(.16 * h, 14)
             pts += [(a + .2 * step, base), (a + .32 * step, base + dip), (a + .46 * step, base - h),
                     (a + .6 * step, base + und), (a + .72 * step, base)]
             apexes[i] = (a + .46 * step, base - h)
         pts.append((a + step, base))
-    return pts, apexes, peak
+    return pts, apexes
 
 
 def draw_plot(c, x, y, w, h, weeks, phone):
-    """Frame, paper/dots, trace, month labels and the labelled peak. Returns (peak value, week index)."""
-    pad = 14
-    base, top = y + h - 24, y + 46
-    step = (w - 2 * pad) / len(weeks)
-    pts, apexes, peak = week_points(weeks, x + pad, step, base, top)
+    """Grid region, reference lines, trace, clipped-spike label and month names. Returns (ceiling, clipped indexes)."""
+    gutter = 44
+    base, top = y + h - 18, y + 8
+    step = (w - gutter - 10) / len(weeks)
+    ceiling, ref = scale_for(weeks)
+    pts, apexes = week_points(weeks, x + gutter, step, base, top, ceiling)
     path = "M" + " L".join(f"{px:.1f} {py:.1f}" for px, py in pts)
-    best = max(range(len(weeks)), key=lambda i: weeks[i]["count"])
-    ax, ay = apexes[best]
     length = sum(math.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(pts, pts[1:]))
     c.trace_len = math.ceil(length) + 2
+    clipped = [i for i, wk in enumerate(weeks) if wk["count"] > ceiling]
+    refs = "".join(
+        f'<line class="ref" x1="{x}" y1="{base - v / ceiling * (base - top):.1f}" x2="{x + w}" y2="{base - v / ceiling * (base - top):.1f}"/>'
+        for v in range(ref, ceiling, ref))
     c.add(
-        f'<defs><clipPath id="plot"><rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10"/></clipPath>'
+        f'<defs><clipPath id="plot"><rect x="{x}" y="{y}" width="{w}" height="{h}"/></clipPath>'
         f'<pattern id="pd" x="{x}" y="{y}" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" class="gd"/></pattern>'
         f'<pattern id="pp" x="{x}" y="{y}" width="40" height="40" patternUnits="userSpaceOnUse">'
         + "".join(f'<path d="M{k} 0V40M0 {k}H40" class="g1"/>' for k in (8, 16, 24, 32))
         + '<path d="M0 0V40M0 0H40" class="g2"/></pattern></defs>'
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10" fill="var(--raised)" stroke="var(--border)"/>'
         f'<g clip-path="url(#plot)"><rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#pd)" class="dg"/>'
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#pp)" class="pg"/>'
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#pp)" class="pg"/>{refs}'
         f'<line class="hair" x1="{x}" y1="{base}" x2="{x + w}" y2="{base}"/>'
         f'<path class="glowp" d="{path}"/><path class="trace" d="{path}"/>'
         f'<circle class="endr" cx="{pts[-1][0]:.1f}" cy="{base}" r="5"/><circle class="end" cx="{pts[-1][0]:.1f}" cy="{base}" r="5"/></g>'
     )
-    c.t(min(max(ax, x + 60), x + w - 60), ay - 10, "db", f"peak {fmt(peak)}", anchor="middle")
-    # month names under the baseline; on phones every second one
+    for v in range(ref, ceiling, ref):
+        c.t(x + 2, base - v / ceiling * (base - top) - 6, "d", str(v), style="font-size:14px")
+    for i in clipped:   # break mark (two short slashes across the spike) and the real value
+        ax, ay = apexes[i]
+        for dy in (22, 28):
+            c.add(f'<line class="brk" x1="{ax - 5:.1f}" y1="{ay + dy + 3:.1f}" x2="{ax + 5:.1f}" y2="{ay + dy - 3:.1f}"/>')
+        c.t(ax + 9, ay + 12, "db", fmt(weeks[i]["count"]))
     marks, prev = [], None
     for i, wk in enumerate(weeks):
         m = int(wk["start"][5:7]) - 1
@@ -795,18 +824,20 @@ def draw_plot(c, x, y, w, h, weeks, phone):
     for k, (i, name) in enumerate(marks):
         if phone and k % 2:
             continue
-        if x + pad + i * step + 30 < x + w:
-            c.t(x + pad + i * step, y + h + 26, "d", name)
-    return peak, best
+        if x + gutter + i * step + 30 < x + w:
+            c.t(x + gutter + i * step, y + h + 26, "d", name)
+    return ceiling, clipped
 
 
 VITALS_CSS = """
 .gd { fill: var(--strong); } .dg { opacity: var(--dots); }
 .g1 { stroke: var(--vital); stroke-opacity: .08; fill: none; } .g2 { stroke: var(--vital); stroke-opacity: .16; fill: none; }
 .pg { opacity: var(--paper); }
+.ref { stroke: var(--muted); stroke-opacity: .45; stroke-dasharray: 2 5; }
+.brk { stroke: var(--strong); stroke-width: 2; stroke-linecap: round; }
 .trace, .glowp { fill: none; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: var(--len); stroke-dashoffset: 0;
                  animation: draw 2.4s linear .3s both; }
-.trace { stroke: var(--trace); stroke-width: 2.2; }
+.trace { stroke: var(--trace); stroke-width: 2; }
 .glowp { stroke: var(--vital); stroke-width: 7; opacity: var(--glow); }
 .end { fill: var(--vital); animation: appear .3s linear 2.7s both; }
 .endr { fill: none; stroke: var(--vital); stroke-width: 2; transform-box: fill-box; transform-origin: center;
@@ -821,43 +852,58 @@ VITALS_CSS = """
 def vitals(data, phone, theme):
     cal, weeks = data["calendar"], data["calendar"]["weeks"]
     c = Canvas(PW if phone else DW)
-    reads = [(fmt(cal["total"]), "contributions in the last 12 months"),
-             (fmt(data["merged_outside"]), "pull requests merged in public repositories outside my own account"),
+    reads = [(fmt(cal["total"]), "contributions, last 12 months"),
+             (fmt(data["merged_outside"]), "pull requests merged in public repos"),
              (fmt(cal["reviews"]), "pull request reviews given")]
-    facts = [plural(cal["active_days"], "active day"), f"longest streak {plural(cal['longest_streak'], 'day')}",
-             f"updated {data['updated']} from the GitHub API"]
+    facts = [plural(cal["active_days"], "active day"), f"longest streak {plural(cal['longest_streak'], 'day')}"]
+    updated = f"updated {data['updated']} from the GitHub API"
 
-    def readouts(x, y, width, side):
-        """Stack the three readouts; side=True puts the label right of its numeral (phones)."""
-        off = max(measure("display", n, 56) for n, _ in reads) + 24
-        for num, label in reads:
-            c.t(x, y + 44, "num", num)
-            if side:
-                last = lines_at(c, x + off, y + 22, "s", wrap("sans", label, 20, width - off))
-                y = max(y + 56, last + 12) + 22
-            else:
-                last = lines_at(c, x, y + 74, "s", wrap("sans", label, 20, width))
-                y = last + 8 + 22
-        for f in facts:
-            for ln in wrap("mono", f, 16, width):
-                y += 26
-                c.t(x, y, "d", ln)
-        return y
+    def meta(x, y, s, width):
+        size = 16
+        while measure("mono", s, size) > width:   # meta lines never wrap
+            size -= .5
+        c.t(x, y, "d", s, style=f"font-size:{size:g}px" if size != 16 else None)
 
     if phone:
-        plot_h = 200
-        peak, best = draw_plot(c, PAD, PT, PW - 2 * PAD, plot_h, weeks, True)
-        end = readouts(PAD, PT + plot_h + 36 + 14, PW - 2 * PAD, True)
-        H = end + 12 + PT
+        plot_h = 170
+        ceiling, clipped = draw_plot(c, PAD, PT, PW - 2 * PAD, plot_h, weeks, True)
+        y = PT + plot_h + 36 + 10
+        for num, label in reads:                 # equal rows: numeral column 160, label right of it
+            c.t(PAD, y + 44, "num", num)
+            ls = wrap("sans", label, 20, PW - 24 - PAD - 160)
+            assert len(ls) <= 2, label
+            lines_at(c, PAD + 160, y + 20, "s", ls)
+            y += 72
+        y += 6
+        for f in facts:
+            c.t(PAD, y + 18, "d", f)
+            y += 26
+        y += 10
+        meta(PAD, y + 18, updated, PW - 2 * PAD)
+        H = y + 18 + 12 + PT
     else:
-        end = readouts(840, PT, DW - PAD - 840, False)
-        plot_h = max(end - PT - 36 + 10, 300)
-        peak, best = draw_plot(c, PAD, PT, 760, plot_h, weeks, False)
-        H = max(end + 12, PT + plot_h + 36) + PT
-    alt = (f"Contributions per week over the last 53 weeks, drawn as one heartbeat per week on a linear scale from zero; "
-           f"the highest week, starting {weeks[best]['start']}, has {fmt(peak)}. {fmt(cal['total'])} contributions in the "
-           f"last 12 months, {fmt(data['merged_outside'])} pull requests merged in public repositories outside my own "
-           f"account, {fmt(cal['reviews'])} pull request reviews given. {facts[0]}, {facts[1]}, {facts[2]}.")
+        plot_h = 250
+        ceiling, clipped = draw_plot(c, PAD, PT, 760, plot_h, weeks, False)
+        rx, y = 812, PT
+        for num, label in reads:
+            c.t(rx, y + 40, "num", num)
+            assert measure("sans", label, 20) <= DW - PAD - rx, label
+            c.t(rx, y + 68, "s", label)
+            y += 82
+        for f in facts:
+            c.t(rx, y + 14, "d", f)
+            y += 24
+        meta(PAD, PT + plot_h + 26 + 30, updated, 760)
+        H = PT + plot_h + 26 + 30 + 12 + PT - 6
+    clip = ""
+    if clipped:
+        i = clipped[0]
+        clip = (f" The week starting {weeks[i]['start']} has {fmt(weeks[i]['count'])}, above the ceiling, "
+                "and is drawn to the top edge with a break mark.")
+    alt = (f"Contributions per week over the last 53 weeks, one heartbeat per week, on a linear scale from zero to a "
+           f"ceiling of {ceiling} per week, with reference lines.{clip} {fmt(cal['total'])} contributions in the last 12 months, "
+           f"{fmt(data['merged_outside'])} pull requests merged in public repositories outside my own account, "
+           f"{fmt(cal['reviews'])} pull request reviews given. {facts[0]}, {facts[1]}, {updated}.")
     return c.render(int(H), alt, theme, f"svg {{ --len: {c.trace_len}; }}" + VITALS_CSS), alt
 
 
