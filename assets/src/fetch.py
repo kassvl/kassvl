@@ -67,19 +67,21 @@ def count(q: str) -> int:
 def fetch_repo(repo: str) -> dict:
     base = f"repo:{repo} is:pr is:public author:{USER}"
     d = gql("""{ repository(owner: "%s", name: "%s") { stargazerCount }
-      merged: search(query: "%s is:merged sort:updated-desc", type: ISSUE, first: 10) {
+      merged: search(query: "%s is:merged sort:updated-desc", type: ISSUE, first: 50) {
         issueCount nodes { ... on PullRequest { title mergedAt } } }
       open: search(query: "%s is:open", type: ISSUE, first: 1) { issueCount } }"""
             % (*repo.split("/"), base, base))
     prs = [n for n in d["merged"]["nodes"] if n and n.get("mergedAt")]
     latest = max(prs, key=lambda n: n["mergedAt"]) if prs else None
-    return {
+    out = {
         "stars": d["repository"]["stargazerCount"],
         "merged": d["merged"]["issueCount"],
         "open": d["open"]["issueCount"],
-        "latest_title": latest["title"] if latest else None,
-        "latest_merged": latest["mergedAt"][:10] if latest else None,
     }
+    if latest:  # otherwise the caller keeps the previous title and date
+        out["latest_title"] = latest["title"]
+        out["latest_merged"] = latest["mergedAt"][:10]
+    return out
 
 
 def numbers(d: dict) -> dict:
@@ -108,7 +110,7 @@ def main() -> int:
             lambda v: new.update(merged_outside=v))
     new.setdefault("repos", {})
     for repo in REPOS:
-        attempt(repo, lambda r=repo: fetch_repo(r), lambda v, r=repo: new["repos"].__setitem__(r, v))
+        attempt(repo, lambda r=repo: fetch_repo(r), lambda v, r=repo: new["repos"].setdefault(r, {}).update(v))
 
     if ok == 0:
         print("nothing could be fetched", file=sys.stderr)
@@ -124,7 +126,7 @@ def main() -> int:
           f"reviews {c.get('reviews')}, active days {c.get('active_days')}, streak {c.get('longest_streak')}, "
           f"updated {new['updated']}")
     for r, v in new["repos"].items():
-        print(f"  {r}: stars {v['stars']}, merged {v['merged']}, open {v['open']}, latest {v['latest_merged']}")
+        print(f"  {r}: stars {v['stars']}, merged {v['merged']}, open {v['open']}, latest {v.get('latest_merged')}")
     return 0
 
 
