@@ -864,37 +864,37 @@ def vitals(data, phone, theme):
             size -= .5
         c.t(x, y, "d", s, style=f"font-size:{size:g}px" if size != 16 else None)
 
+    summary = f"{facts[0]}, {facts[1]}"
     if phone:
         plot_h = 170
         ceiling, clipped = draw_plot(c, PAD, PT, PW - 2 * PAD, plot_h, weeks, True)
         y = PT + plot_h + 36 + 10
-        for num, label in reads:                 # equal rows: numeral column 160, label right of it
-            c.t(PAD, y + 44, "num", num)
-            ls = wrap("sans", label, 20, PW - 24 - PAD - 160)
+        for num, label in reads:                 # equal rows: numeral column 170, label right of it
+            c.t(PAD, y + 40, "num", num, style="font-size:48px")
+            ls = wrap("sans", label, 20, PW - 24 - PAD - 170)
             assert len(ls) <= 2, label
-            lines_at(c, PAD + 160, y + 20, "s", ls)
+            lines_at(c, PAD + 170, y + 20, "s", ls)
             y += 72
         y += 6
-        for f in facts:
-            c.t(PAD, y + 18, "d", f)
-            y += 26
-        y += 10
-        meta(PAD, y + 18, updated, PW - 2 * PAD)
-        H = y + 18 + 12 + PT
+        meta(PAD, y + 18, summary, PW - 2 * PAD)
+        meta(PAD, y + 18 + 28, updated, PW - 2 * PAD)
+        H = y + 18 + 28 + 12 + PT
     else:
-        plot_h = 250
+        plot_h = 284
         ceiling, clipped = draw_plot(c, PAD, PT, 760, plot_h, weeks, False)
-        rx, y = 812, PT
-        for num, label in reads:
-            c.t(rx, y + 40, "num", num)
+        rx = 812
+        last_base = PT + plot_h - 18            # the plot baseline
+        n1 = PT + 37                            # top of the first numeral on the plot top
+        n3 = last_base - 28
+        for k, (num, label) in enumerate(reads):
+            n = n1 + (n3 - n1) * k / 2          # blocks spread evenly over the plot's height
+            c.t(rx, n, "num", num, style="font-size:52px")
             assert measure("sans", label, 20) <= DW - PAD - rx, label
-            c.t(rx, y + 68, "s", label)
-            y += 82
-        for f in facts:
-            c.t(rx, y + 14, "d", f)
-            y += 24
-        meta(PAD, PT + plot_h + 26 + 30, updated, 760)
-        H = PT + plot_h + 26 + 30 + 12 + PT - 6
+            c.t(rx, n + 28, "s", label)
+        by = PT + plot_h + 26 + 30
+        meta(PAD, by, updated, 760)
+        c.t(DW - PAD, by, "d", summary, anchor="end")
+        H = by + 12 + PT - 6
     clip = ""
     if clipped:
         i = clipped[0]
