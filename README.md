@@ -9,29 +9,6 @@
 | [boards](https://github.com/Git-Hospital/boards) | Benchmark for diagnosis tools: known defects, clean twins and hand-verified values, scored by applying the fix | in development |
 | [GitHealthCheck](https://github.com/Git-Hospital/githealthcheck) | Code health analyzer: tests, history, complexity. Every number is a measurement, or null with a reason | Go rewrite in progress |
 
-## Shipped for clients
-
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://braidss.xyz"><img src="https://kadirhanemrememis.xyz/projects/kulama-booking.jpg" alt="Kulama booking page" /></a>
-      <br />
-      <b><a href="https://github.com/kassvl/KulamaHairCare">Kulama Booking</a></b>, live at <a href="https://braidss.xyz">braidss.xyz</a><br />
-      Website and booking system for a braiding studio. Guests request a slot and follow it on a
-      private status page; the studio confirms, declines or offers a new time from its admin desk.<br />
-      <sub>Next.js 16, React 19, TypeScript, Postgres, Tailwind v4, Vercel</sub>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://loomr.net"><img src="https://kadirhanemrememis.xyz/projects/loomr.jpg" alt="LOOMR showroom" /></a>
-      <br />
-      <b>LOOMR</b>, live at <a href="https://loomr.net">loomr.net</a><br />
-      Website for a fashion and textile design studio: a showroom you walk through and a garment
-      configurator with live pricing.<br />
-      <sub>Next.js 16, React 19, TypeScript, Canvas, Vercel</sub>
-    </td>
-  </tr>
-</table>
-
 ## Work
 
 | Where | What I do |
