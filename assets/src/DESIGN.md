@@ -12,49 +12,63 @@ card. Everything else stays quiet.
 
 ## Page order
 
-1. `hero` (existing)
-2. `vitals`: the last 53 weeks of contributions drawn as a monitor trace, with three readouts
-3. `git-hospital` banner (existing, without its four-tool footer strip: the rows below replace it)
-4. four tool rows, one image each, each linking to its repository
-5. `## Open source`, then one row per upstream project, each linking to my pull requests there
-6. `## Work`, then one card
-7. `### Team products (private repos, happy to walk through the code)`, then one card
-8. `## Stack` stays as the existing text block, and the footer line stays as text
+The whole README is one card made of stacked image segments in one paragraph (no markdown
+headings, no code block, no other text). Order:
 
-The three markdown tables are removed. No content is added that the README does not already
-state, except numbers read from the public GitHub API.
+1. `hero` (round top corners)
+2. `vitals`: the last 53 weeks of contributions drawn as a monitor trace, with three readouts
+3. `git-hospital` banner (without its tool strip: the rows below replace it)
+4. four tool rows, each linking to its repository
+5. `head-open-source`: title "Open source" and, right-aligned in muted data type, "each row opens
+   my pull requests there"; links to the merged pull request search
+6. one row per upstream project, each linking to my pull requests there
+7. `work`: title "Work", then its rows
+8. `team`: title "Team products" and, in muted sentence type, "private repos, happy to walk
+   through the code", then its rows
+9. `stack` (round bottom corners): title "Stack", five rows (label in muted data type, values
+   in sentence type), a hairline, then three muted facts: B.Eng. Information Technology, WSB
+   Merito Wrocław; Oracle Cloud Infrastructure 2025 Foundations Associate; Turkish, English
+   (C1+), Polish (A2-B1)
+
+No content is added that the README did not already state, except numbers read from the public
+GitHub API.
 
 ## Tokens
 
-Fonts (already embedded as subsets): Fraunces 600 for names and numerals, Inter 400/500 for
-sentences, JetBrains Mono 500 only for data: counts, dates, repository paths.
+Fonts (embedded as subsets per file): Fraunces 600 for names, titles and numerals, Inter 400
+for sentences, JetBrains Mono 500 only for data: counts, dates, repository paths.
 
-| Token | Dark (base) | Light (`prefers-color-scheme: light`) |
-| --- | --- | --- |
-| card background | `#0c0a09` | `#ffffff` |
-| raised surface | `#171310` | `#f6f9fc` |
-| border | `#3a2f28` | `#d6e0e9` |
-| ink strong | `#f4ece2` | `#0f1c2a` |
-| ink body | `#d1c3b4` | `#2d3d4e` |
-| ink muted | `#968779` | `#5e7082` |
-| vital (trace, accents) | `#c7331e` | `#dc383e` |
-| in review | `#d9a441` | `#a8720f` |
-| merged | `#7fb069` | `#16803f` |
+| Token | Value |
+| --- | --- |
+| card background | `#0c0a09` (the Git Hospital band keeps its `#171310` scene) |
+| raised surface | `#171310` |
+| border | `#3a2f28` |
+| ink strong | `#f4ece2` |
+| ink body | `#d1c3b4` |
+| ink muted | `#968779` |
+| vital (trace, accents) | `#c7331e` |
+| in review | `#d9a441` |
+| merged | `#7fb069` |
 
-Dark is the night palette of the banners. Light is the palette of kadirhanemrememis.xyz. The
-two banners are illustrations and stay dark in both themes. Colors are CSS custom properties
-on the root `svg`, overridden inside one media query, so one file serves both themes.
+One palette, always: the night palette of the banners. There is no light theme and no
+`prefers-color-scheme` rule. Colors are CSS custom properties on the root `svg`.
 
 Scale: desktop cards use a 1200-unit wide viewBox, like the banners. Phone cards use a
 440-unit wide viewBox with the same type sizes: the README column is 308px wide on a 390px
 screen, so a 20-unit sentence renders at 14px.
 
 Delivery: `<picture>` chooses the file by width only
-(`<source media="(max-width: 600px)" srcset="assets/x-phone.svg">`), and each SVG switches
-theme inside its own `<style>`. Width and color scheme are never combined in one `media`:
-GitHub's themed-picture script rewrites any source that mentions `prefers-color-scheme` and
-drops the width part. Images in one paragraph sit about 5px apart on github.com, paragraphs
-about 21px apart; rows of one group share a paragraph.
+(`<source media="(max-width: 600px)" srcset="assets/x-phone.svg">`), and every `<img>` carries
+`align="top"`: such images in one paragraph stack with 0px between them on github.com, so the
+README is a single paragraph with one line per segment.
+
+One card: all segments share the background; only the first has round top corners (radius 18)
+and only the last round bottom corners. A 1-unit border in the border color runs along the left
+and right edge of every segment at the same x, along the top of the hero and the bottom of the
+last segment. Scaled heights are fractional, so every segment except the last ends with a
+full-width 1-unit hairline exactly at its bottom edge to hide any seam; there are no other
+separators between segments. Hairlines between rows inside work and team are full width too.
+Section starts have 44 units of top padding, rows 30.
 
 | Role | Size (units) |
 | --- | --- |
@@ -63,7 +77,7 @@ about 21px apart; rows of one group share a paragraph.
 | sentence | Inter 400, 20, line height 30 |
 | data | JetBrains Mono 500, 16 |
 
-Card: radius 18 (as the banners), 1 unit border, 40 units side padding, 30 top and bottom.
+Side padding 40 units; rows 30 units top and bottom; section titles Fraunces 600, 30.
 
 ## Vitals card
 
@@ -78,9 +92,7 @@ the ceiling. The alt text states the ceiling and the clipped value. Month names 
 baseline (every second one on phones).
 
 No framed box inside the card: baseline, reference lines and trace are drawn straight on the
-card. Dark: faint dot grid, vital-red trace (2 units, round joins) with a soft glow. Light: ECG
-paper (small squares at 8% opacity, every fifth line 16%) as a plain rectangle without outline
-or radius, trace in strong ink. Motion: the trace draws once left to right in about 2.4
+card. Faint dot grid, vital-red trace (2 units, round joins) with a soft glow. Motion: the trace draws once left to right in about 2.4
 seconds, then a dot at the current week pulses. `prefers-reduced-motion` shows the finished trace.
 
 Size: desktop plot region about 250 units high, card about 360; phone plot about 170.
@@ -154,11 +166,12 @@ Team products:
 - Work and team rows are images, not markdown text. Objection raised in review (2026-11-24):
   image text cannot be searched or selected, a row can carry only one link, and it shrinks
   on phones. Overruled because the HarfBuzz link moved to its own open source row, the phone
-  files keep sentences at 14px, the alt text states every fact, and the Stack block stays
-  as searchable text. Revisit if a second link per row is ever needed.
-- In Safari an SVG image follows the OS color scheme, not GitHub's theme setting. Accepted:
-  Chrome and Firefox follow GitHub's setting, and the mismatch needs a fixed GitHub theme
-  that differs from the OS.
+  files keep sentences at 14px, the alt text states every fact, and the Stack block stayed
+  as searchable text (it has since moved into the card, see below). Revisit if a second link per row is ever needed.
+- 2026-11-24, at the owner's request (one card, one design): the light theme is removed and the
+  Stack block moved into the card as the last segment. The Safari note about SVG images
+  following the OS color scheme is obsolete and deleted. Work and team rows stay images
+  (see the objection above), now with in-card titles instead of markdown headings.
 
 ## Data rules
 

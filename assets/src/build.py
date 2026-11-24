@@ -33,6 +33,7 @@ FONTS = {
     "F": f"{CDN}/fraunces@5.1.0/files/fraunces-latin-600-normal.woff2",
     "I4": f"{CDN}/inter@5.1.0/files/inter-latin-400-normal.woff2",
     "I5": f"{CDN}/inter@5.1.0/files/inter-latin-500-normal.woff2",
+    "I4x": f"{CDN}/inter@5.1.0/files/inter-latin-ext-400-normal.woff2",
     "J": f"{CDN}/jetbrains-mono@5.1.0/files/jetbrains-mono-latin-500-normal.woff2",
     "Jx": f"{CDN}/jetbrains-mono@5.1.0/files/jetbrains-mono-latin-ext-500-normal.woff2",
 }
@@ -59,7 +60,7 @@ def _font(key: str):
     return _TT[key]
 
 
-FAMILY_KEYS = {"display": ("F",), "sans": ("I4",), "mono": ("J", "Jx")}
+FAMILY_KEYS = {"display": ("F",), "sans": ("I4", "I4x"), "mono": ("J", "Jx")}
 
 
 def measure(family: str, s: str, size: float, spacing: float = 0.0) -> float:
@@ -134,6 +135,9 @@ def build_fonts(strings: dict) -> str:
         faces.append(font_face("F", "Display", strings["display"], 600))
     if strings.get("sans4"):
         faces.append(font_face("I4", "Sans", strings["sans4"], 400))
+        ext = "".join(sorted({c for c in strings["sans4"] if 0x100 <= ord(c) <= 0x24F}))
+        if ext:
+            faces.append(font_face("I4x", "Sans", ext, 400, latin_ext=True))
     if strings.get("sans5"):
         faces.append(font_face("I5", "Sans", strings["sans5"], 500))
     if strings.get("mono"):
@@ -159,11 +163,45 @@ COMMON_CSS = f"""
 REDUCED = "@media (prefers-reduced-motion: reduce) { * { animation: none !important; opacity: 1 !important; } }"
 
 
-def dot_grid(w, h, rx) -> str:
+R = 18  # corner radius of the one card
+
+
+def shape_d(w, h, pos) -> str:
+    """Outline of a segment of the one card: only the first has round top corners, only the last round bottom ones."""
+    top, bot = (R if pos == "first" else 0), (R if pos == "last" else 0)
+    d = f"M0 {top} "
+    d += f"A{R} {R} 0 0 1 {R} 0 " if top else ""
+    d += f"H{w - top} "
+    d += f"A{R} {R} 0 0 1 {w} {R} " if top else ""
+    d += f"V{h - bot} "
+    d += f"A{R} {R} 0 0 1 {w - R} {h} " if bot else ""
+    d += f"H{bot} "
+    d += f"A{R} {R} 0 0 1 0 {h - R} " if bot else ""
+    return d + "Z"
+
+
+def frame_lines(w, h, pos) -> str:
+    """1-unit border: both sides of every segment, the top edge on the first, the bottom edge on the last;
+    every segment but the last ends with a full-width hairline exactly at its bottom edge (hides seams)."""
+    r = R - .5
+    st = f'fill="none" stroke="{BORDER}" stroke-width="1"'
+    if pos == "first":
+        d = f"M.5 {h} V{R} A{r} {r} 0 0 1 {R} .5 H{w - R} A{r} {r} 0 0 1 {w - .5} {R} V{h}"
+    elif pos == "last":
+        d = f"M.5 0 V{h - R} A{r} {r} 0 0 0 {R} {h - .5} H{w - R} A{r} {r} 0 0 0 {w - .5} {h - R} V0"
+    else:
+        d = f"M.5 0 V{h} M{w - .5} 0 V{h}"
+    out = f'<path d="{d}" {st}/>'
+    if pos != "last":
+        out += f'<line x1="0" y1="{h - .5}" x2="{w}" y2="{h - .5}" {st}/>'
+    return out
+
+
+def dot_grid(w, h, pos) -> str:
     return (
         f'<defs><pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">'
         f'<circle cx="2" cy="2" r="1" fill="{INK50}" fill-opacity=".07"/></pattern>'
-        f'<clipPath id="frame"><rect width="{w}" height="{h}" rx="{rx}"/></clipPath></defs>'
+        f'<clipPath id="frame"><path d="{shape_d(w, h, pos)}"/></clipPath></defs>'
     )
 
 
@@ -278,7 +316,7 @@ def hero(phone=False) -> str:
 
 def _hero_body(W, H, cx, cy, kicker, name, role, para, stack, contacts):
     body = [
-        dot_grid(W, H, 18),
+        dot_grid(W, H, "first"),
         '<g clip-path="url(#frame)">',
         f'<rect width="{W}" height="{H}" fill="{BG}"/>',
         f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
@@ -299,6 +337,7 @@ def _hero_body(W, H, cx, cy, kicker, name, role, para, stack, contacts):
                     + text(x + 26, 484, "mono contact", value) + "</g>")
         x += 26 + 9.3 * len(value) + 44
     body.append("</g>")
+    body.append(frame_lines(W, H, "first"))
     return body
 
 
@@ -342,9 +381,9 @@ def _hero_phone_body(W, cx, cy, kicker, name, role, para, stack, contacts):
                     + text(px + 26, y, "mono contact", value) + "</g>")
         y += 34
     H = int(y + 6)
-    return [dot_grid(W, H, 18), '<g clip-path="url(#frame)">',
+    return [dot_grid(W, H, "first"), '<g clip-path="url(#frame)">',
             f'<rect width="{W}" height="{H}" fill="{BG}"/>', f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
-            *body, "</g>"], H
+            *body, "</g>", frame_lines(W, H, "first")], H
 
 
 # ---------------------------------------------------------------- Git Hospital card
@@ -520,19 +559,19 @@ def git_hospital(phone=False) -> str:
         y += 30 * (len(lines) - 1) + 38
         texts.append(text(40, y, "mono rise", url, style="animation-delay:.4s"))
         H = int(y + 30)
-        body = [dot_grid(OW, H, 18), defs, '<g clip-path="url(#frame)">',
+        body = [dot_grid(OW, H, "mid"), defs, '<g clip-path="url(#frame)">',
                 f'<rect width="{OW}" height="{H}" fill="{SURFACE}"/>',
                 f'<rect width="{OW}" height="{H}" fill="url(#dots)"/>',
-                f'<g transform="scale({k})">{"".join(scene)}</g>', *texts, "</g>"]
+                f'<g transform="scale({k})">{"".join(scene)}</g>', *texts, "</g>", frame_lines(OW, H, "mid")]
         W = OW
     else:
         H = 272
-        body = [dot_grid(W, H, 18), defs, '<g clip-path="url(#frame)">',
+        body = [dot_grid(W, H, "mid"), defs, '<g clip-path="url(#frame)">',
                 f'<rect width="{W}" height="{H}" fill="{SURFACE}"/>',
                 f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
                 *scene,
                 text(W - 70, 40, "mono rise", url, text_anchor="end"),
-                text(70, 238, "lead rise", lead, style="animation-delay:.3s"), "</g>"]
+                text(70, 238, "lead rise", lead, style="animation-delay:.3s"), "</g>", frame_lines(W, H, "mid")]
     label = f"{title}: {lead} An ambulance drives out of a hospital's emergency bay and the name appears behind it."
     return svg(W, H, label, css, "\n".join(body))
 
@@ -541,35 +580,29 @@ def git_hospital(phone=False) -> str:
 
 DATA = Path(__file__).resolve().parent / "data.json"
 
-# name: (dark, light). The two halves of every card's theme come from this table.
+# The whole page is one card in the night palette; there is no light theme.
 THEME_VARS = {
-    "bg": ("#0c0a09", "#ffffff"), "raised": ("#171310", "#f6f9fc"), "border": ("#3a2f28", "#d6e0e9"),
-    "strong": ("#f4ece2", "#0f1c2a"), "body": ("#d1c3b4", "#2d3d4e"), "muted": ("#968779", "#5e7082"),
-    "vital": ("#c7331e", "#dc383e"), "review": ("#d9a441", "#a8720f"), "merged": ("#7fb069", "#16803f"),
-    "trace": ("#c7331e", "#0f1c2a"),            # the trace itself: vital red on the monitor, ink on ECG paper
-    "glow": (".3", "0"), "dots": (".1", "0"), "paper": ("0", "1"),
+    "bg": BG, "raised": SURFACE, "border": BORDER,
+    "strong": "#f4ece2", "body": "#d1c3b4", "muted": "#968779",
+    "vital": "#c7331e", "review": "#d9a441", "merged": "#7fb069",
+    "trace": "#c7331e", "glow": ".3", "dots": ".1",
 }
 
 
-def theme_css(theme=None) -> str:
-    def block(i):
-        return "; ".join(f"--{k}: {v[i]}" for k, v in THEME_VARS.items())
-    if theme == "dark":
-        return f"svg {{ {block(0)} }}"
-    if theme == "light":
-        return f"svg {{ {block(1)} }}"
-    return f"svg {{ {block(0)} }}\n@media (prefers-color-scheme: light) {{ svg {{ {block(1)} }} }}"
+def theme_css() -> str:
+    return "svg { " + "; ".join(f"--{k}: {v}" for k, v in THEME_VARS.items()) + " }"
 
 
 SERIF = "'Display', Georgia, serif"
 SANS = "'Sans', 'Helvetica Neue', Arial, sans-serif"
 MONO = "'Mono', 'SFMono-Regular', Menlo, Consolas, monospace"
 CARD_CSS = f"""
-.shell {{ fill: var(--bg); stroke: var(--border); }}
 .n    {{ font: 600 28px {SERIF}; fill: var(--strong); }}
 .num  {{ font: 600 56px {SERIF}; fill: var(--strong); }}
 .s    {{ font: 400 20px {SANS}; fill: var(--body); }}
 .st   {{ font: 400 20px {SANS}; fill: var(--strong); }}
+.h    {{ font: 600 30px {SERIF}; fill: var(--strong); }}
+.sm   {{ font: 400 20px {SANS}; fill: var(--muted); }}
 .d    {{ font: 500 16px {MONO}; fill: var(--muted); }}
 .db   {{ font: 500 16px {MONO}; fill: var(--body); }}
 .hair {{ stroke: var(--border); }}
@@ -577,7 +610,7 @@ CARD_CSS = f"""
 .dm   {{ fill: var(--merged); }}
 .dr   {{ fill: var(--review); }}
 """
-CLASS_FAMILY = {"n": "display", "num": "display", "s": "sans", "st": "sans", "d": "mono", "db": "mono"}
+CLASS_FAMILY = {"n": "display", "num": "display", "h": "display", "sm": "sans", "s": "sans", "st": "sans", "d": "mono", "db": "mono"}
 PAD, PT = 40, 30          # side padding, top and bottom padding of a row
 DW, PW = 1200, 440        # desktop and phone viewBox widths
 
@@ -601,12 +634,12 @@ class Canvas:
     def add(self, markup):
         self.el.append(markup)
 
-    def render(self, H, label, theme, css=""):
+    def render(self, H, label, pos, css=""):
         join = lambda k: "".join(sorted(self.chars[k]))
         fonts = build_fonts({"display": join("display"), "sans4": join("sans"), "mono": join("mono")})
-        body = (f'<rect class="shell" x=".5" y=".5" width="{self.W - 1}" height="{H - 1}" rx="18"/>\n'
-                + "\n".join(self.el))
-        return svg(self.W, H, label, fonts + "\n" + theme_css(theme) + CARD_CSS + css, body)
+        body = (f'<path d="{shape_d(self.W, H, pos)}" fill="{BG}"/>\n' + "\n".join(self.el)
+                + "\n" + frame_lines(self.W, H, pos))
+        return svg(self.W, H, label, fonts + "\n" + theme_css() + CARD_CSS + css, body)
 
 
 def fmt(n) -> str:
@@ -738,17 +771,76 @@ def row_work(c, y, r, phone):
     return max(last, left_bottom) + 10 + PT - y
 
 
-ROW_FN = {"tool": row_tool, "os": row_os, "work": row_work}
+SECTION_TOP = 44   # a section starts 44 units below the previous segment, rows keep 30
 
 
-def rows_card(rows, phone, theme, label):
+def row_title(c, y, r, phone):
+    """Section title (Fraunces 30) with an optional note: muted data type right-aligned, or muted sentence type."""
+    base = y + SECTION_TOP + 22
+    c.t(PAD, base, "h", r["text"])
+    tw = measure("display", r["text"], 30)
+    note, last = r.get("note"), base
+    if note and r["note_cls"] == "d":
+        nw = measure("mono", note, 16)
+        if not phone and PAD + tw + 24 + nw <= c.W - PAD:
+            c.t(c.W - PAD, base, "d", note, anchor="end")
+        else:
+            size = 16
+            while measure("mono", note, size) > c.W - 2 * PAD:
+                size -= .5
+            last = base + 30
+            c.t(PAD, last, "d", note, style=f"font-size:{size:g}px" if size != 16 else None)
+    elif note:
+        if not phone and PAD + tw + 24 + measure("sans", note, 20) <= c.W - PAD:
+            c.t(PAD + tw + 24, base, "sm", note)
+        else:
+            last = lines_at(c, PAD, base + 32, "sm", wrap("sans", note, 20, c.W - 2 * PAD))
+    return last + (12 if last == base else 18) - y
+
+
+STACK_ROWS = [
+    ("frontend", "React, Next.js, TypeScript, Tailwind CSS, Framer Motion, Vite, React Native"),
+    ("backend", "Python (FastAPI, Celery), Node.js (NestJS, Express), Go, REST, JWT/OAuth"),
+    ("data", "PostgreSQL, Redis, SQLAlchemy + Alembic"),
+    ("testing", "pytest, Vitest, Playwright, Jest, go test"),
+    ("platform", "Docker, Kubernetes, Helm, Istio, GitHub Actions, Terraform, AWS, Vercel, Fly.io, Linux"),
+]
+STACK_FACTS = ["B.Eng. Information Technology, WSB Merito Wrocław",
+               "Oracle Cloud Infrastructure 2025 Foundations Associate",
+               "Turkish, English (C1+), Polish (A2-B1)"]
+
+
+def row_stack(c, y, r, phone):
+    """Five stack rows, a full-width hairline, then the three footer facts in muted sentence type."""
+    cur = y + 36
+    for label, values in STACK_ROWS:
+        if phone:
+            c.t(PAD, cur, "d", label)
+            last = lines_at(c, PAD, cur + 28, "s", wrap("sans", values, 20, c.W - 2 * PAD))
+            cur = last + 36
+        else:
+            c.t(PAD, cur, "d", label)
+            last = lines_at(c, 350, cur, "s", wrap("sans", values, 20, c.W - PAD - 350))
+            cur = last + 40
+    line = cur - 12
+    c.add(f'<line class="hair" x1="0" y1="{line}" x2="{c.W}" y2="{line}"/>')
+    last = line + 6
+    for f in STACK_FACTS:
+        last = lines_at(c, PAD, last + 30, "sm", wrap("sans", f, 20, c.W - 2 * PAD))
+    return last + 12 + PT - y
+
+
+ROW_FN = {"tool": row_tool, "os": row_os, "work": row_work, "title": row_title, "stack": row_stack}
+
+
+def rows_card(rows, phone, label, pos):
     c = Canvas(PW if phone else DW)
     y = 0
     for i, r in enumerate(rows):
-        if i:
-            c.add(f'<line class="hair" x1="{PAD}" y1="{y}" x2="{c.W - PAD}" y2="{y}"/>')
+        if i and rows[i - 1]["kind"] != "title" and r["kind"] not in ("stack",):
+            c.add(f'<line class="hair" x1="0" y1="{y}" x2="{c.W}" y2="{y}"/>')   # full width, between rows
         y += ROW_FN[r["kind"]](c, y, r, phone)
-    return c.render(int(y), label, theme)
+    return c.render(int(y), label, pos)
 
 
 # ---- the vitals card
@@ -799,11 +891,9 @@ def draw_plot(c, x, y, w, h, weeks, phone):
     c.add(
         f'<defs><clipPath id="plot"><rect x="{x}" y="{y}" width="{w}" height="{h}"/></clipPath>'
         f'<pattern id="pd" x="{x}" y="{y}" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" class="gd"/></pattern>'
-        f'<pattern id="pp" x="{x}" y="{y}" width="40" height="40" patternUnits="userSpaceOnUse">'
-        + "".join(f'<path d="M{k} 0V40M0 {k}H40" class="g1"/>' for k in (8, 16, 24, 32))
-        + '<path d="M0 0V40M0 0H40" class="g2"/></pattern></defs>'
+        '</defs>'
         f'<g clip-path="url(#plot)"><rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#pd)" class="dg"/>'
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#pp)" class="pg"/>{refs}'
+        f'{refs}'
         f'<line class="hair" x1="{x}" y1="{base}" x2="{x + w}" y2="{base}"/>'
         f'<path class="glowp" d="{path}"/><path class="trace" d="{path}"/>'
         f'<circle class="endr" cx="{pts[-1][0]:.1f}" cy="{base}" r="5"/><circle class="end" cx="{pts[-1][0]:.1f}" cy="{base}" r="5"/></g>'
@@ -831,8 +921,6 @@ def draw_plot(c, x, y, w, h, weeks, phone):
 
 VITALS_CSS = """
 .gd { fill: var(--strong); } .dg { opacity: var(--dots); }
-.g1 { stroke: var(--vital); stroke-opacity: .08; fill: none; } .g2 { stroke: var(--vital); stroke-opacity: .16; fill: none; }
-.pg { opacity: var(--paper); }
 .ref { stroke: var(--muted); stroke-opacity: .45; stroke-dasharray: 2 5; }
 .brk { stroke: var(--strong); stroke-width: 2; stroke-linecap: round; }
 .trace, .glowp { fill: none; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: var(--len); stroke-dashoffset: 0;
@@ -849,7 +937,7 @@ VITALS_CSS = """
 """
 
 
-def vitals(data, phone, theme):
+def vitals(data, phone, pos="mid"):
     cal, weeks = data["calendar"], data["calendar"]["weeks"]
     c = Canvas(PW if phone else DW)
     reads = [(fmt(cal["total"]), "contributions, last 12 months"),
@@ -904,7 +992,7 @@ def vitals(data, phone, theme):
            f"ceiling of {ceiling} per week, with reference lines.{clip} {fmt(cal['total'])} contributions in the last 12 months, "
            f"{fmt(data['merged_outside'])} pull requests merged in public repositories outside my own account, "
            f"{fmt(data['reviewed_public'])} pull requests by others reviewed in public repositories. {facts[0]}, {facts[1]}, {updated}.")
-    return c.render(int(H), alt, theme, f"svg {{ --len: {c.trace_len}; }}" + VITALS_CSS), alt
+    return c.render(int(H), alt, pos, f"svg {{ --len: {c.trace_len}; }}" + VITALS_CSS), alt
 
 
 # ---- content (DESIGN.md "Content")
@@ -962,22 +1050,32 @@ def work_alt(rows):
                     + (f" Built with {r['built']}." if r.get("built") else "") for r in rows)
 
 
+PR_SEARCH = "https://github.com/search?q=author%3Akassvl+is%3Apr+is%3Amerged&type=pullrequests"
+
+
 def card_specs(data):
-    """(file name, builder(phone, theme) -> (svg, alt), link) for every data card, in page order."""
-    specs = [("vitals", lambda ph, th: vitals(data, ph, th),
-              "https://github.com/search?q=author%3Akassvl+is%3Apr+is%3Amerged&type=pullrequests")]
+    """(file name, builder(phone) -> (svg, alt), link) for every data card, in page order."""
+    specs = [("vitals", lambda ph: vitals(data, ph), PR_SEARCH)]
     for name, repo, desc, status in TOOLS:
         alt = f"{name}: {desc}. Status: {status}."
         row = {"kind": "tool", "name": name, "desc": desc, "status": status}
-        specs.append((f"tool-{name.lower()}", lambda ph, th, row=row, alt=alt: (rows_card([row], ph, th, alt), alt),
+        specs.append((f"tool-{name.lower()}", lambda ph, row=row, alt=alt: (rows_card([row], ph, alt, "mid"), alt),
                       f"https://github.com/{repo}"))
+    head = {"kind": "title", "text": "Open source", "note": "each row opens my pull requests there", "note_cls": "d"}
+    alt = "Open source: each row opens my pull requests there."
+    specs.append(("head-open-source", lambda ph, head=head, alt=alt: (rows_card([head], ph, alt, "mid"), alt), PR_SEARCH))
     for r in os_rows(data):
         alt = os_alt(r)
         specs.append((f"os-{r['owner']}-{r['repo']}".lower().replace(".", "-"),
-                      lambda ph, th, r=r, alt=alt: (rows_card([r], ph, th, alt), alt), r["url"]))
-    for name, rows in (("work", WORK), ("team", TEAM)):
-        alt = work_alt(rows)
-        specs.append((name, lambda ph, th, rows=rows, alt=alt: (rows_card(rows, ph, th, alt), alt), SITE))
+                      lambda ph, r=r, alt=alt: (rows_card([r], ph, alt, "mid"), alt), r["url"]))
+    team_note = "private repos, happy to walk through the code"
+    for name, title, note, rows in (("work", "Work", None, WORK), ("team", "Team products", team_note, TEAM)):
+        t = {"kind": "title", "text": title, "note": note, "note_cls": "sm"}
+        alt = f"{title}" + (f", {note}" if note else "") + ". " + work_alt(rows)
+        specs.append((name, lambda ph, t=t, rows=rows, alt=alt: (rows_card([t] + rows, ph, alt, "mid"), alt), SITE))
+    alt = ("Stack. " + " ".join(f"{k}: {v}." for k, v in STACK_ROWS) + " " + ". ".join(STACK_FACTS) + ".")
+    t = {"kind": "title", "text": "Stack"}
+    specs.append(("stack", lambda ph: (rows_card([t, {"kind": "stack"}], ph, alt, "last"), alt), SITE))
     return specs
 
 
@@ -986,38 +1084,19 @@ def card_specs(data):
 def picture(prefix, name, alt, href):
     alt = escape(alt, {'"': "&quot;"})
     return (f'<a href="{href}"><picture><source media="(max-width: 600px)" srcset="{prefix}{name}-phone.svg">'
-            f'<img src="{prefix}{name}.svg" width="100%" alt="{alt}"></picture></a>')
-
-
-STACK = """## Stack
-
-```text
-frontend   React, Next.js, TypeScript, Tailwind CSS, Framer Motion, Vite, React Native
-backend    Python (FastAPI, Celery), Node.js (NestJS, Express), Go, REST, JWT/OAuth
-data       PostgreSQL, Redis, SQLAlchemy + Alembic
-testing    pytest, Vitest, Playwright, Jest, go test
-platform   Docker, Kubernetes, Helm, Istio, GitHub Actions, Terraform, AWS, Vercel, Fly.io, Linux
-```
-
-<sub>B.Eng. Information Technology, WSB Merito Wrocław · Oracle Cloud Infrastructure 2025 Foundations Associate · Turkish, English (C1+), Polish (A2-B1)</sub>
-"""
+            f'<img align="top" src="{prefix}{name}.svg" width="100%" alt="{alt}"></picture></a>')
 
 
 def readme(alts, specs, prefix) -> str:
+    """One paragraph, one line per segment: align="top" images stack with no gap on github.com."""
     link = {n: h for n, _, h in specs}
     pic = lambda n: picture(prefix, n, alts[n], link[n])
     tools = [f"tool-{t[0].lower()}" for t in TOOLS]
     oss = [n for n, _, _ in specs if n.startswith("os-")]
-    parts = [
-        picture(prefix, "hero", HERO_ALT, SITE),
-        pic("vitals"),
-        picture(prefix, "git-hospital", GH_ALT, "https://github.com/Git-Hospital"),
-        "\n".join(pic(n) for n in tools),
-        "## Open source\n\n" + "\n".join(pic(n) for n in oss),
-        "## Work\n\n" + pic("work"),
-        "### Team products (private repos, happy to walk through the code)\n\n" + pic("team"),
-    ]
-    return "\n\n".join(parts) + "\n\n" + STACK
+    lines = [picture(prefix, "hero", HERO_ALT, SITE), pic("vitals"),
+             picture(prefix, "git-hospital", GH_ALT, "https://github.com/Git-Hospital"),
+             *map(pic, tools), pic("head-open-source"), *map(pic, oss), pic("work"), pic("team"), pic("stack")]
+    return "\n".join(lines) + "\n"
 
 
 # ---------------------------------------------------------------- driver
@@ -1032,7 +1111,6 @@ def validate(path: Path):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--theme", choices=("light", "dark"), help="hard-set the card theme (previews only)")
     ap.add_argument("--out", type=Path, help="write here instead of assets/ (previews only)")
     a = ap.parse_args()
     data = json.loads(DATA.read_text())
@@ -1041,14 +1119,14 @@ def main():
     prefix = "" if a.out else "assets/"
     specs = card_specs(data)
     alts = {}
-    for name, fn in (("hero", hero), ("git-hospital", git_hospital)):   # illustrations: always dark
+    for name, fn in (("hero", hero), ("git-hospital", git_hospital)):   # banners
         for phone in (False, True):
             f = out / f"{name}{'-phone' if phone else ''}.svg"
             f.write_text(fn(phone))
             validate(f)
     for name, fn, _ in specs:
         for phone in (False, True):
-            markup, alt = fn(phone, a.theme)
+            markup, alt = fn(phone)
             alts[name] = alt
             f = out / f"{name}{'-phone' if phone else ''}.svg"
             f.write_text(markup)

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Write four local pages that imitate GitHub's README column, for looking at the cards.
+"""Write four local pages that imitate GitHub's README column, for looking at the one card.
 
 Desktop (column 846px) and phone (column 308px), each on a dark (#0d1117) and a light (#ffffff)
-page. The cards are rebuilt with `build.py --theme` so each page shows one theme regardless of the
-OS setting. Output goes to assets/src/preview/ (gitignored); nothing committed is touched.
+page. The card is always the night palette; only the page behind it changes. Images are
+top-aligned and inline, so they stack with no gap like `align="top"` images on github.com.
+Output goes to assets/src/preview/ (gitignored); nothing committed is touched.
 
 Usage: python3 assets/src/preview.py
 """
@@ -57,7 +58,7 @@ body {{ margin: 0; padding: 32px {pad}px 48px; width: {column}px; box-sizing: co
         font: 16px/1.5 {FONT}; word-wrap: break-word; }}
 p {{ margin: 0 0 16px; }}
 a {{ color: {link}; text-decoration: none; }}
-img {{ max-width: 100%; vertical-align: middle; border-style: none; box-sizing: content-box; }}
+img {{ max-width: 100%; vertical-align: top; display: inline-block; border-style: none; box-sizing: content-box; }}
 h2 {{ font-size: 1.5em; font-weight: 600; line-height: 1.25; margin: 24px 0 16px; padding-bottom: .3em; border-bottom: 1px solid {line}; }}
 h3 {{ font-size: 1.25em; font-weight: 600; line-height: 1.25; margin: 24px 0 16px; }}
 pre {{ margin: 0 0 16px; padding: 16px; overflow: auto; background: {code}; border-radius: 6px; font: 85%/1.45 {MONO}; }}
@@ -71,10 +72,10 @@ sub {{ font-size: smaller; vertical-align: sub; line-height: 0; }}
 
 def main():
     OUT.mkdir(exist_ok=True)
+    subprocess.run([sys.executable, str(HERE / "build.py"), "--out", str(OUT / "build")], check=True)
+    body = markdown((OUT / "build" / "README.md").read_text())
+    body = re.sub(r'(src|srcset)="', r'\1="build/', body)
     for theme in THEMES:
-        subprocess.run([sys.executable, str(HERE / "build.py"), "--theme", theme, "--out", str(OUT / theme)], check=True)
-        body = markdown((OUT / theme / "README.md").read_text())
-        body = re.sub(r'(src|srcset)="', rf'\1="{theme}/', body)
         for kind in ("desktop", "phone"):
             f = OUT / f"{kind}-{theme}.html"
             f.write_text(page(theme, kind, body))

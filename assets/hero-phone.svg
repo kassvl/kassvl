@@ -21,7 +21,7 @@
 @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 15% { transform: scale(1.22); } 30% { transform: scale(.94); } 42% { transform: scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; opacity: 1 !important; } }
 </style>
-<defs><pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#f4ece2" fill-opacity=".07"/></pattern><clipPath id="frame"><rect width="440" height="993" rx="18"/></clipPath></defs>
+<defs><pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#f4ece2" fill-opacity=".07"/></pattern><clipPath id="frame"><path d="M0 18 A18 18 0 0 1 18 0 H422 A18 18 0 0 1 440 18 V993 H0 Z"/></clipPath></defs>
 <g clip-path="url(#frame)">
 <rect width="440" height="993" fill="#0c0a09"/>
 <rect width="440" height="993" fill="url(#dots)"/>
@@ -90,4 +90,5 @@
 <g class="rise" style="animation-delay:1.5s"><rect x="40" y="905.0058451741672" width="16" height="16" rx="3" fill="#c7331e"/><text x="48" y="917.5058451741672" text-anchor="middle" style="font: 500 11px 'Mono', monospace; fill: #0c0a09">in</text><text class="mono contact" x="66" y="919.0058451741672">linkedin.com/in/kadirhan-emre</text></g>
 <g class="rise" style="animation-delay:1.6s"><rect x="40" y="941.0058451741672" width="16" height="12" rx="2" fill="none" stroke="#c7331e" stroke-width="1.6"/><path d="M41 942.0058451741672 L48 948.0058451741672 L55 942.0058451741672" fill="none" stroke="#c7331e" stroke-width="1.6"/><text class="mono contact" x="66" y="953.0058451741672">kadirhanemre@proton.me</text></g>
 </g>
+<path d="M.5 993 V18 A17.5 17.5 0 0 1 18 .5 H422 A17.5 17.5 0 0 1 439.5 18 V993" fill="none" stroke="#3a2f28" stroke-width="1"/><line x1="0" y1="992.5" x2="440" y2="992.5" fill="none" stroke="#3a2f28" stroke-width="1"/>
 </svg>

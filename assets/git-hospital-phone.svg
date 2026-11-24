@@ -35,7 +35,7 @@
 @media (prefers-reduced-motion: reduce) { .wave, .speed { opacity: 0 !important; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; opacity: 1 !important; } }
 </style>
-<defs><pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#f4ece2" fill-opacity=".07"/></pattern><clipPath id="frame"><rect width="440" height="265" rx="18"/></clipPath></defs>
+<defs><pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#f4ece2" fill-opacity=".07"/></pattern><clipPath id="frame"><path d="M0 0 H440 V265 H0 Z"/></clipPath></defs>
 <defs><clipPath id="trail"><rect class="drive" x="-1700" y="0" width="2400" height="192"/></clipPath><clipPath id="street"><rect x="150" y="101" width="100" height="101"/><rect x="250" y="0" width="880" height="242"/></clipPath><radialGradient id="glow-r"><stop offset="0" stop-color="#c7331e" stop-opacity=".75"/><stop offset="1" stop-color="#c7331e" stop-opacity="0"/></radialGradient><radialGradient id="glow-b"><stop offset="0" stop-color="#3b82f6" stop-opacity=".75"/><stop offset="1" stop-color="#3b82f6" stop-opacity="0"/></radialGradient><radialGradient id="crossglow"><stop offset="0" stop-color="#c7331e" stop-opacity=".55"/><stop offset="1" stop-color="#c7331e" stop-opacity="0"/></radialGradient><linearGradient id="bay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a441" stop-opacity=".35"/><stop offset=".5" stop-color="#120f0d"/><stop offset="1" stop-color="#0c0a09"/></linearGradient><linearGradient id="lamp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a441" stop-opacity=".22"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/></linearGradient><linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9a441" stop-opacity=".45"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/></linearGradient></defs>
 <g clip-path="url(#frame)">
 <rect width="440" height="265" fill="#171310"/>
@@ -46,4 +46,5 @@
 <text class="lead rise" x="40" y="197.0" style="animation-delay:.3s">evidence for every diagnosis.</text>
 <text class="mono rise" x="40" y="235.0" style="animation-delay:.4s">github.com/Git-Hospital</text>
 </g>
+<path d="M.5 0 V265 M439.5 0 V265" fill="none" stroke="#3a2f28" stroke-width="1"/><line x1="0" y1="264.5" x2="440" y2="264.5" fill="none" stroke="#3a2f28" stroke-width="1"/>
 </svg>
