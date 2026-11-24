@@ -92,7 +92,8 @@ lines):
 - `contributions, last 12 months`
 - `pull requests merged in public repos` (precisely: in public repositories outside my own
   account; the alt text says so)
-- `pull request reviews given`
+- `public pull requests reviewed` (pull requests by others that I reviewed; counted
+  by search with `is:public`, so the account's token and the workflow's token agree)
 
 Under the readouts, in data type and never wrapped: `129 active days`, `longest streak 21 days`.
 `updated YYYY-MM-DD from the GitHub API` sits bottom left under the month labels on desktop

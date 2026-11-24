@@ -854,7 +854,7 @@ def vitals(data, phone, theme):
     c = Canvas(PW if phone else DW)
     reads = [(fmt(cal["total"]), "contributions, last 12 months"),
              (fmt(data["merged_outside"]), "pull requests merged in public repos"),
-             (fmt(cal["reviews"]), "pull request reviews given")]
+             (fmt(data["reviewed_public"]), "public pull requests reviewed")]
     facts = [plural(cal["active_days"], "active day"), f"longest streak {plural(cal['longest_streak'], 'day')}"]
     updated = f"updated {data['updated']} from the GitHub API"
 
@@ -903,7 +903,7 @@ def vitals(data, phone, theme):
     alt = (f"Contributions per week over the last 53 weeks, one heartbeat per week, on a linear scale from zero to a "
            f"ceiling of {ceiling} per week, with reference lines.{clip} {fmt(cal['total'])} contributions in the last 12 months, "
            f"{fmt(data['merged_outside'])} pull requests merged in public repositories outside my own account, "
-           f"{fmt(cal['reviews'])} pull request reviews given. {facts[0]}, {facts[1]}, {updated}.")
+           f"{fmt(data['reviewed_public'])} pull requests by others reviewed in public repositories. {facts[0]}, {facts[1]}, {updated}.")
     return c.render(int(H), alt, theme, f"svg {{ --len: {c.trace_len}; }}" + VITALS_CSS), alt
 
 

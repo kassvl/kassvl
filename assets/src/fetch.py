@@ -39,7 +39,6 @@ def gql(query: str) -> dict:
 
 def fetch_calendar() -> dict:
     d = gql("""{ user(login: "%s") { contributionsCollection {
-      totalPullRequestReviewContributions
       contributionCalendar { totalContributions weeks { firstDay contributionDays { date contributionCount } } }
     } } }""" % USER)["user"]["contributionsCollection"]
     cal = d["contributionCalendar"]
@@ -55,7 +54,6 @@ def fetch_calendar() -> dict:
         "total": cal["totalContributions"],
         "active_days": sum(1 for c in days if c > 0),
         "longest_streak": longest,
-        "reviews": d["totalPullRequestReviewContributions"],
     }
 
 
@@ -108,6 +106,11 @@ def main() -> int:
     attempt("merged outside own account",
             lambda: count(f"author:{USER} is:pr is:merged is:public -user:{USER}"),
             lambda v: new.update(merged_outside=v))
+    # Counted by search, not from contributionsCollection: that total includes private
+    # repositories for the account's own token and leaves them out for the workflow's token.
+    attempt("reviewed in public repos",
+            lambda: count(f"reviewed-by:{USER} is:pr is:public -author:{USER}"),
+            lambda v: new.update(reviewed_public=v))
     new.setdefault("repos", {})
     for repo in REPOS:
         attempt(repo, lambda r=repo: fetch_repo(r), lambda v, r=repo: new["repos"].setdefault(r, {}).update(v))
@@ -123,7 +126,7 @@ def main() -> int:
         DATA.write_text(text)
     c = new.get("calendar", {})
     print(f"contributions {c.get('total')}, merged outside {new.get('merged_outside')}, "
-          f"reviews {c.get('reviews')}, active days {c.get('active_days')}, streak {c.get('longest_streak')}, "
+          f"reviewed {new.get('reviewed_public')}, active days {c.get('active_days')}, streak {c.get('longest_streak')}, "
           f"updated {new['updated']}")
     for r, v in new["repos"].items():
         print(f"  {r}: stars {v['stars']}, merged {v['merged']}, open {v['open']}, latest {v.get('latest_merged')}")

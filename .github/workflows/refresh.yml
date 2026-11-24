@@ -44,5 +44,5 @@ jobs:
       - name: Show result (other branches)
         if: github.ref != 'refs/heads/main'
         run: |
-          python3 -c "import json; d=json.load(open('assets/src/data.json')); c=d['calendar']; print('contributions', c['total'], 'reviews', c['reviews'], 'merged outside', d['merged_outside']); [print(r, v['merged'], v['open']) for r, v in d['repos'].items()]"
+          python3 -c "import json; d=json.load(open('assets/src/data.json')); c=d['calendar']; print('contributions', c['total'], 'reviewed', d['reviewed_public'], 'merged outside', d['merged_outside']); [print(r, v['merged'], v['open']) for r, v in d['repos'].items()]"
           git diff --stat
