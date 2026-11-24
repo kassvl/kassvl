@@ -795,7 +795,8 @@ def row_title(c, y, r, phone):
             c.t(PAD + tw + 24, base, "sm", note)
         else:
             last = lines_at(c, PAD, base + 32, "sm", wrap("sans", note, 20, c.W - 2 * PAD))
-    return last + (12 if last == base else 18) - y
+    # a title that is its own segment sits right above the seam hairline and needs more room
+    return last + (12 if last == base else 18) + (16 if r.get("alone") else 0) - y
 
 
 STACK_ROWS = [
@@ -1061,7 +1062,8 @@ def card_specs(data):
         row = {"kind": "tool", "name": name, "desc": desc, "status": status}
         specs.append((f"tool-{name.lower()}", lambda ph, row=row, alt=alt: (rows_card([row], ph, alt, "mid"), alt),
                       f"https://github.com/{repo}"))
-    head = {"kind": "title", "text": "Open source", "note": "each row opens my pull requests there", "note_cls": "d"}
+    head = {"kind": "title", "text": "Open source", "note": "each row opens my pull requests there", "note_cls": "d",
+            "alone": True}
     alt = "Open source: each row opens my pull requests there."
     specs.append(("head-open-source", lambda ph, head=head, alt=alt: (rows_card([head], ph, alt, "mid"), alt), PR_SEARCH))
     for r in os_rows(data):
