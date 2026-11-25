@@ -836,7 +836,56 @@ def row_stack(c, y, r, phone):
     return last + 12 + PT - y
 
 
-ROW_FN = {"tool": row_tool, "os": row_os, "work": row_work, "title": row_title, "stack": row_stack}
+# ---- languages: one stacked bar and a legend
+
+LANG_COLORS = [RED, AMBER, "#7fb069", INK200, INK400, INK600]   # by rank; "other" takes the border color
+BAR_H, BAR_GAP, BAR_MIN, DOT = 14, 3, 6, 10
+
+
+def bar_widths(shares, total_w):
+    """Segment widths proportional to share after the gaps; none under BAR_MIN, the excess comes off the largest."""
+    avail = total_w - BAR_GAP * (len(shares) - 1)
+    ws = [max(BAR_MIN, avail * v / sum(shares)) for v in shares]
+    ws[ws.index(max(ws))] -= sum(ws) - avail
+    return ws
+
+
+def legend_item_w(it):
+    return DOT + 8 + measure("sans", it["name"], 20) + 10 + measure("mono", f"{it['share']:.1f}%", 16)
+
+
+def row_languages(c, y, r, phone):
+    items = r["items"]
+    top = y + 14
+    shares = [i["share"] for i in items]
+    x, ws = PAD, bar_widths(shares, c.W - 2 * PAD)
+    segs = []
+    for i, (it, w) in enumerate(zip(items, ws)):
+        color = BORDER if it["name"] == "other" else LANG_COLORS[i]
+        segs.append(f'<rect x="{x:.2f}" y="{top}" width="{w:.2f}" height="{BAR_H}" fill="{color}"/>')
+        x += w + BAR_GAP
+    c.add(f'<clipPath id="bar"><rect x="{PAD}" y="{top}" width="{c.W - 2 * PAD}" height="{BAR_H}" rx="{BAR_H / 2}"/></clipPath>'
+          f'<g clip-path="url(#bar)">' + "".join(segs) + "</g>")
+    n, avail = len(items), c.W - 2 * PAD
+    cols = 2 if phone else n
+    if not phone and max(legend_item_w(i) for i in items) + 16 > avail / n:
+        cols = (n + 1) // 2
+    col_w = avail / cols
+    assert all(legend_item_w(i) <= col_w for i in items), "legend item wider than its column"
+    row_h = 34
+    for k, it in enumerate(items):
+        cx, cy = PAD + (k % cols) * col_w, top + BAR_H + 26 + (k // cols) * row_h
+        color = BORDER if it["name"] == "other" else LANG_COLORS[k]
+        c.add(f'<circle cx="{cx + DOT / 2:.1f}" cy="{cy:.1f}" r="{DOT / 2}" fill="{color}"/>')
+        nx = cx + DOT + 8
+        c.t(nx, cy + 7, "st", it["name"])
+        c.t(nx + measure("sans", it["name"], 20) + 10, cy + 6, "d", f"{it['share']:.1f}%")
+    rows = (n + cols - 1) // cols
+    return top + BAR_H + 26 + (rows - 1) * row_h + 7 + 32 - y
+
+
+ROW_FN = {"tool": row_tool, "os": row_os, "work": row_work, "title": row_title, "stack": row_stack,
+          "languages": row_languages}
 
 
 def rows_card(rows, phone, label, pos):
@@ -1083,6 +1132,15 @@ def card_specs(data):
         t = {"kind": "title", "text": title, "note": note, "note_cls": "sm"}
         alt = f"{title}" + (f", {note}" if note else "") + ". " + work_alt(rows)
         specs.append((name, lambda ph, t=t, rows=rows, alt=alt: (rows_card([t] + rows, ph, alt, "only"), alt), SITE))
+    lang = data.get("languages")
+    if lang:
+        note = "share of code in my public repos and Git Hospital"
+        t = {"kind": "title", "text": "Languages", "note": note, "note_cls": "d"}
+        row = {"kind": "languages", "items": lang["items"]}
+        alt = ("Languages: share of code in my public repositories and Git Hospital, by bytes. "
+               + ", ".join(f"{i['name']} {i['share']:.1f}%" for i in lang["items"]) + ".")
+        specs.append(("languages", lambda ph, t=t, row=row, alt=alt: (rows_card([t, row], ph, alt, "only"), alt),
+                      "https://github.com/kassvl?tab=repositories"))
     alt = ("Stack. " + " ".join(f"{k}: {v}." for k, v in STACK_ROWS) + " " + ". ".join(STACK_FACTS) + ".")
     t = {"kind": "title", "text": "Stack"}
     specs.append(("stack", lambda ph: (rows_card([t, {"kind": "stack"}], ph, alt, "only"), alt), SITE))
@@ -1109,7 +1167,7 @@ def readme(alts, specs, prefix) -> str:
         [pic("vitals")],
         [picture(prefix, "git-hospital", GH_ALT, "https://github.com/Git-Hospital"), *map(pic, tools)],
         [pic("head-open-source"), *map(pic, oss)],
-        [pic("work")], [pic("team")], [pic("stack")],
+        [pic("work")], [pic("team")], *([[pic("languages")]] if "languages" in link else []), [pic("stack")],
     ]
     return "\n\n".join("\n".join(g) for g in groups) + "\n"
 

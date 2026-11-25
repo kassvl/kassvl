@@ -82,6 +82,45 @@ def fetch_repo(repo: str) -> dict:
     return out
 
 
+LANG_ORGS = ["Git-Hospital"]   # organizations whose public non-fork repositories count with the user's own
+LANG_TOP = 6
+
+
+def fetch_languages() -> dict:
+    """Share of each language by bytes over public, non-fork repositories of USER and LANG_ORGS.
+    Shares (percent, one decimal, summing to exactly 100.0) are stored, not bytes, so data.json
+    changes only when a shown number changes."""
+    langs = "languages(first: 20, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } }"
+    parts = ['u: user(login: "%s") { repositories(first: 100, privacy: PUBLIC, isFork: false, '
+             'ownerAffiliations: OWNER) { nodes { %s } } }' % (USER, langs)]
+    for i, org in enumerate(LANG_ORGS):
+        parts.append('o%d: organization(login: "%s") { repositories(first: 50, privacy: PUBLIC, isFork: false) '
+                     '{ nodes { %s } } }' % (i, org, langs))
+    d = gql("{ " + " ".join(parts) + " }")
+    repos = list(d["u"]["repositories"]["nodes"])
+    for i in range(len(LANG_ORGS)):
+        repos += d[f"o{i}"]["repositories"]["nodes"]
+    totals: dict = {}
+    for r in repos:
+        for e in r["languages"]["edges"]:
+            totals[e["node"]["name"]] = totals.get(e["node"]["name"], 0) + e["size"]
+    whole = sum(totals.values())
+    if not whole:
+        raise RuntimeError("no language bytes returned")
+    ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
+    groups = [(n, b) for n, b in ranked[:LANG_TOP]]
+    rest = sum(b for _, b in ranked[LANG_TOP:])
+    # largest remainder on tenths of a percent, so the rounded shares sum to exactly 100.0
+    exact = [b / whole * 1000 for _, b in groups] + [rest / whole * 1000]
+    tenths = [int(x) for x in exact]
+    for i in sorted(range(len(exact)), key=lambda i: exact[i] - tenths[i], reverse=True)[:1000 - sum(tenths)]:
+        tenths[i] += 1
+    out = [{"name": n, "share": t / 10} for (n, _), t in zip(groups, tenths)]
+    if tenths[-1] >= 1:
+        out.append({"name": "other", "share": tenths[-1] / 10})
+    return {"items": out, "repos": len(repos)}
+
+
 def numbers(d: dict) -> dict:
     """Everything except the `updated` stamp, for change detection."""
     return {k: v for k, v in d.items() if k != "updated"}
@@ -111,6 +150,7 @@ def main() -> int:
     attempt("reviewed in public repos",
             lambda: count(f"reviewed-by:{USER} is:pr is:public -author:{USER}"),
             lambda v: new.update(reviewed_public=v))
+    attempt("languages", fetch_languages, lambda v: new.update(languages=v))
     new.setdefault("repos", {})
     for repo in REPOS:
         attempt(repo, lambda r=repo: fetch_repo(r), lambda v, r=repo: new["repos"].setdefault(r, {}).update(v))
@@ -128,6 +168,9 @@ def main() -> int:
     print(f"contributions {c.get('total')}, merged outside {new.get('merged_outside')}, "
           f"reviewed {new.get('reviewed_public')}, active days {c.get('active_days')}, streak {c.get('longest_streak')}, "
           f"updated {new['updated']}")
+    lg = new.get("languages")
+    if lg:
+        print("  languages (" + f"{lg['repos']} repos): " + ", ".join(f"{i['name']} {i['share']}" for i in lg["items"]))
     for r, v in new["repos"].items():
         print(f"  {r}: stars {v['stars']}, merged {v['merged']}, open {v['open']}, latest {v.get('latest_merged')}")
     return 0

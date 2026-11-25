@@ -12,7 +12,7 @@ card. Everything else stays quiet.
 
 ## Page order
 
-The README is seven category cards, each a paragraph of stacked image segments (no markdown
+The README is eight category cards, each a paragraph of stacked image segments (no markdown
 headings, no code block, no other text). Order:
 
 1. Card 1: `hero`
@@ -25,7 +25,9 @@ headings, no code block, no other text). Order:
 5. Card 5: `work`: title "Work", then its rows
 6. Card 6: `team`: title "Team products" and, in muted sentence type, "private repos, happy to walk
    through the code", then its rows
-7. Card 7: `stack`: title "Stack", five rows (label in muted data type, values
+7. Card 7: `languages`: title "Languages" and, right-aligned in muted data type, "share of code in my public
+   repos and Git Hospital", then one stacked bar and its legend; links to `https://github.com/kassvl?tab=repositories`
+8. Card 8: `stack`: title "Stack", five rows (label in muted data type, values
    in sentence type), a hairline, then three muted facts: B.Eng. Information Technology, WSB
    Merito Wrocław; Oracle Cloud Infrastructure 2025 Foundations Associate; Turkish, English
    (C1+), Polish (A2-B1)
@@ -117,6 +119,29 @@ Under the readouts, in data type and never wrapped: `129 active days`, `longest 
 `updated YYYY-MM-DD from the GitHub API` sits bottom left under the month labels on desktop
 and on the last line of the card on phones. The date is the day the numbers last changed.
 
+## Languages card
+
+Data rule: bytes per language summed over public, non-fork repositories owned by `kassvl` or by the
+`Git-Hospital` organization (one GraphQL query, `languages(first: 20)` per repository). Private
+repositories and forks are never counted. Today that is 16 repositories.
+
+One horizontal bar across the content width (x 40 to 1160), 14 units high with rounded ends, 3-unit
+gaps in the card background between segments, segment width proportional to share (at least 6 units
+so a small share stays visible; the excess comes off the largest segment). Static, no animation.
+Under it a legend in bar order: a 10-unit dot in the segment color, the name in sentence type
+(ink strong), the share in data type (ink muted), like `68.4%`. Desktop: columns of equal width
+starting at x 40, all on one row when every item fits its column by measured width, otherwise two
+rows; phones: two columns.
+
+Colors by rank, from the tokens only: `#c7331e`, `#d9a441`, `#7fb069`, `#d1c3b4`, `#968779`,
+`#695c51`, and "other" (everything past the top 6, shown when at least 0.1%) in the border color
+`#3a2f28`. If `data.json` has no `languages` key the card and its README paragraph are skipped.
+
+`data.json` stores shares, not bytes: the top 6 languages as percent with one decimal, rounded by
+largest remainder so they sum to exactly 100.0, plus the number of repositories counted. Byte
+counts change with every push; shares change only when a shown number changes, so the file (and the
+daily refresh commit) stays quiet.
+
 ## Rows
 
 One component, three uses. Desktop: name column (x 40 to 330), sentence column (x 350 to 930),
@@ -184,7 +209,8 @@ Team products:
 
 ## Data rules
 
-- Only public data. Every search carries `is:public`; the workflow uses the default
+- Only public data. The languages card counts only public non-fork repositories owned by `kassvl` or
+  `Git-Hospital`. Every search carries `is:public`; the workflow uses the default
   `GITHUB_TOKEN`, which cannot see private repositories anyway.
 - A number that cannot be fetched keeps its last value from `data.json`; the build never
   writes a guess or a zero in its place.
