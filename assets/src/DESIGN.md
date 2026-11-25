@@ -12,20 +12,20 @@ card. Everything else stays quiet.
 
 ## Page order
 
-The whole README is one card made of stacked image segments in one paragraph (no markdown
+The README is seven category cards, each a paragraph of stacked image segments (no markdown
 headings, no code block, no other text). Order:
 
-1. `hero` (round top corners)
-2. `vitals`: the last 53 weeks of contributions drawn as a monitor trace, with three readouts
-3. `git-hospital` banner (without its tool strip: the rows below replace it)
-4. four tool rows, each linking to its repository
-5. `head-open-source`: title "Open source" and, right-aligned in muted data type, "each row opens
+1. Card 1: `hero`
+2. Card 2: `vitals`: the last 53 weeks of contributions drawn as a monitor trace, with three readouts
+3. Card 3: `git-hospital` banner (without its tool strip: the rows below replace it), then
+   four tool rows, each linking to its repository
+4. Card 4: `head-open-source`: title "Open source" and, right-aligned in muted data type, "each row opens
    my pull requests there"; links to the merged pull request search
-6. one row per upstream project, each linking to my pull requests there
-7. `work`: title "Work", then its rows
-8. `team`: title "Team products" and, in muted sentence type, "private repos, happy to walk
+   then one row per upstream project, each linking to my pull requests there
+5. Card 5: `work`: title "Work", then its rows
+6. Card 6: `team`: title "Team products" and, in muted sentence type, "private repos, happy to walk
    through the code", then its rows
-9. `stack` (round bottom corners): title "Stack", five rows (label in muted data type, values
+7. Card 7: `stack`: title "Stack", five rows (label in muted data type, values
    in sentence type), a hairline, then three muted facts: B.Eng. Information Technology, WSB
    Merito Wrocław; Oracle Cloud Infrastructure 2025 Foundations Associate; Turkish, English
    (C1+), Polish (A2-B1)
@@ -59,15 +59,21 @@ screen, so a 20-unit sentence renders at 14px.
 
 Delivery: `<picture>` chooses the file by width only
 (`<source media="(max-width: 600px)" srcset="assets/x-phone.svg">`), and every `<img>` carries
-`align="top"`: such images in one paragraph stack with 0px between them on github.com, so the
-README is a single paragraph with one line per segment.
+`align="top"`: such images in one paragraph stack with 0px between them on github.com, so each
+card is one paragraph with one line per segment, and a blank line between paragraphs gives the
+16px gap between cards. Every generated SVG root carries `preserveAspectRatio="none"`: Safari
+rounds the image box height, and with the default "meet" the drawing would shrink to fit and
+leave a sliver at both sides of short segments, so the border would jog. With "none" the drawing
+always fills the box (distortion under 1%).
 
-One card: all segments share the background; only the first has round top corners (radius 18)
-and only the last round bottom corners. A 1-unit border in the border color runs along the left
-and right edge of every segment at the same x, along the top of the hero and the bottom of the
-last segment. Scaled heights are fractional, so every segment except the last ends with a
-full-width 1-unit hairline exactly at its bottom edge to hide any seam; there are no other
-separators between segments. Hairlines between rows inside work and team are full width too.
+Category cards: all segments share the background; the first segment of a card has round top
+corners (radius 18) and the top border, the last has round bottom corners and the bottom border,
+and a single-segment card has all four. The corner cut-outs are transparent, because the cards
+sit on GitHub's page background (#0d1117 dark, #ffffff light). A 1-unit border in the border
+color runs along the left and right edge of every segment at the same x. Scaled heights are
+fractional, so every segment except the last of its card ends with a full-width 1-unit hairline
+exactly at its bottom edge to hide any seam; the last segment ends with the card's bottom border
+instead. There are no other separators between segments. Hairlines between rows inside work and team are full width too.
 Section starts have 44 units of top padding, rows 30.
 
 | Role | Size (units) |
@@ -172,6 +178,9 @@ Team products:
   Stack block moved into the card as the last segment. The Safari note about SVG images
   following the OS color scheme is obsolete and deleted. Work and team rows stay images
   (see the objection above), now with in-card titles instead of markdown headings.
+- 2026-11-25, at the owner's request: the single card was split into one card per category,
+  because the single stack read as an undifferentiated list. Palette, fonts and row design are
+  unchanged.
 
 ## Data rules
 

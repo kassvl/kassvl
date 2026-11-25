@@ -123,7 +123,7 @@ def text(x, y, cls, s, **attrs) -> str:
 def svg(width, height, label, styles, body) -> str:
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
-        f'width="{width}" height="{height}" role="img" aria-label="{escape(label, {chr(34): "&quot;"})}">\n'
+        f'width="{width}" height="{height}" preserveAspectRatio="none" role="img" aria-label="{escape(label, {chr(34): "&quot;"})}">\n'
         f"<style>\n{styles}\n</style>\n{body}\n</svg>\n"
     )
 
@@ -163,12 +163,13 @@ COMMON_CSS = f"""
 REDUCED = "@media (prefers-reduced-motion: reduce) { * { animation: none !important; opacity: 1 !important; } }"
 
 
-R = 18  # corner radius of the one card
+R = 18  # corner radius of a card
+# pos of a segment inside its card: "first", "mid", "last", or "only" for a card of one segment
 
 
 def shape_d(w, h, pos) -> str:
-    """Outline of a segment of the one card: only the first has round top corners, only the last round bottom ones."""
-    top, bot = (R if pos == "first" else 0), (R if pos == "last" else 0)
+    """Outline of a segment of a card: the first has round top corners, the last round bottom ones, a lone one both."""
+    top, bot = (R if pos in ("first", "only") else 0), (R if pos in ("last", "only") else 0)
     d = f"M0 {top} "
     d += f"A{R} {R} 0 0 1 {R} 0 " if top else ""
     d += f"H{w - top} "
@@ -181,18 +182,22 @@ def shape_d(w, h, pos) -> str:
 
 
 def frame_lines(w, h, pos) -> str:
-    """1-unit border: both sides of every segment, the top edge on the first, the bottom edge on the last;
-    every segment but the last ends with a full-width hairline exactly at its bottom edge (hides seams)."""
+    """1-unit border: both sides of every segment, the top edge on the first of a card, the bottom edge on the last;
+    every segment but the last of a card ends with a full-width hairline exactly at its bottom edge (hides seams)."""
     r = R - .5
     st = f'fill="none" stroke="{BORDER}" stroke-width="1"'
-    if pos == "first":
+    top, bot = pos in ("first", "only"), pos in ("last", "only")
+    if top and bot:
+        d = (f"M.5 {h - R} V{R} A{r} {r} 0 0 1 {R} .5 H{w - R} A{r} {r} 0 0 1 {w - .5} {R} V{h - R} "
+             f"A{r} {r} 0 0 1 {w - R} {h - .5} H{R} A{r} {r} 0 0 1 .5 {h - R}")
+    elif top:
         d = f"M.5 {h} V{R} A{r} {r} 0 0 1 {R} .5 H{w - R} A{r} {r} 0 0 1 {w - .5} {R} V{h}"
-    elif pos == "last":
+    elif bot:
         d = f"M.5 0 V{h - R} A{r} {r} 0 0 0 {R} {h - .5} H{w - R} A{r} {r} 0 0 0 {w - .5} {h - R} V0"
     else:
         d = f"M.5 0 V{h} M{w - .5} 0 V{h}"
     out = f'<path d="{d}" {st}/>'
-    if pos != "last":
+    if not bot:
         out += f'<line x1="0" y1="{h - .5}" x2="{w}" y2="{h - .5}" {st}/>'
     return out
 
@@ -316,7 +321,7 @@ def hero(phone=False) -> str:
 
 def _hero_body(W, H, cx, cy, kicker, name, role, para, stack, contacts):
     body = [
-        dot_grid(W, H, "first"),
+        dot_grid(W, H, "only"),
         '<g clip-path="url(#frame)">',
         f'<rect width="{W}" height="{H}" fill="{BG}"/>',
         f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
@@ -337,7 +342,7 @@ def _hero_body(W, H, cx, cy, kicker, name, role, para, stack, contacts):
                     + text(x + 26, 484, "mono contact", value) + "</g>")
         x += 26 + 9.3 * len(value) + 44
     body.append("</g>")
-    body.append(frame_lines(W, H, "first"))
+    body.append(frame_lines(W, H, "only"))
     return body
 
 
@@ -381,9 +386,9 @@ def _hero_phone_body(W, cx, cy, kicker, name, role, para, stack, contacts):
                     + text(px + 26, y, "mono contact", value) + "</g>")
         y += 34
     H = int(y + 6)
-    return [dot_grid(W, H, "first"), '<g clip-path="url(#frame)">',
+    return [dot_grid(W, H, "only"), '<g clip-path="url(#frame)">',
             f'<rect width="{W}" height="{H}" fill="{BG}"/>', f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
-            *body, "</g>", frame_lines(W, H, "first")], H
+            *body, "</g>", frame_lines(W, H, "only")], H
 
 
 # ---------------------------------------------------------------- Git Hospital card
@@ -559,19 +564,19 @@ def git_hospital(phone=False) -> str:
         y += 30 * (len(lines) - 1) + 38
         texts.append(text(40, y, "mono rise", url, style="animation-delay:.4s"))
         H = int(y + 30)
-        body = [dot_grid(OW, H, "mid"), defs, '<g clip-path="url(#frame)">',
+        body = [dot_grid(OW, H, "first"), defs, '<g clip-path="url(#frame)">',
                 f'<rect width="{OW}" height="{H}" fill="{SURFACE}"/>',
                 f'<rect width="{OW}" height="{H}" fill="url(#dots)"/>',
-                f'<g transform="scale({k})">{"".join(scene)}</g>', *texts, "</g>", frame_lines(OW, H, "mid")]
+                f'<g transform="scale({k})">{"".join(scene)}</g>', *texts, "</g>", frame_lines(OW, H, "first")]
         W = OW
     else:
         H = 272
-        body = [dot_grid(W, H, "mid"), defs, '<g clip-path="url(#frame)">',
+        body = [dot_grid(W, H, "first"), defs, '<g clip-path="url(#frame)">',
                 f'<rect width="{W}" height="{H}" fill="{SURFACE}"/>',
                 f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
                 *scene,
                 text(W - 70, 40, "mono rise", url, text_anchor="end"),
-                text(70, 238, "lead rise", lead, style="animation-delay:.3s"), "</g>", frame_lines(W, H, "mid")]
+                text(70, 238, "lead rise", lead, style="animation-delay:.3s"), "</g>", frame_lines(W, H, "first")]
     label = f"{title}: {lead} An ambulance drives out of a hospital's emergency bay and the name appears behind it."
     return svg(W, H, label, css, "\n".join(body))
 
@@ -938,7 +943,7 @@ VITALS_CSS = """
 """
 
 
-def vitals(data, phone, pos="mid"):
+def vitals(data, phone, pos="only"):
     cal, weeks = data["calendar"], data["calendar"]["weeks"]
     c = Canvas(PW if phone else DW)
     reads = [(fmt(cal["total"]), "contributions, last 12 months"),
@@ -1057,27 +1062,30 @@ PR_SEARCH = "https://github.com/search?q=author%3Akassvl+is%3Apr+is%3Amerged&typ
 def card_specs(data):
     """(file name, builder(phone) -> (svg, alt), link) for every data card, in page order."""
     specs = [("vitals", lambda ph: vitals(data, ph), PR_SEARCH)]
-    for name, repo, desc, status in TOOLS:
+    for i, (name, repo, desc, status) in enumerate(TOOLS):
         alt = f"{name}: {desc}. Status: {status}."
         row = {"kind": "tool", "name": name, "desc": desc, "status": status}
-        specs.append((f"tool-{name.lower()}", lambda ph, row=row, alt=alt: (rows_card([row], ph, alt, "mid"), alt),
+        pos = "last" if i == len(TOOLS) - 1 else "mid"
+        specs.append((f"tool-{name.lower()}", lambda ph, row=row, alt=alt, pos=pos: (rows_card([row], ph, alt, pos), alt),
                       f"https://github.com/{repo}"))
     head = {"kind": "title", "text": "Open source", "note": "each row opens my pull requests there", "note_cls": "d",
             "alone": True}
     alt = "Open source: each row opens my pull requests there."
-    specs.append(("head-open-source", lambda ph, head=head, alt=alt: (rows_card([head], ph, alt, "mid"), alt), PR_SEARCH))
-    for r in os_rows(data):
+    specs.append(("head-open-source", lambda ph, head=head, alt=alt: (rows_card([head], ph, alt, "first"), alt), PR_SEARCH))
+    orows = os_rows(data)
+    for i, r in enumerate(orows):
         alt = os_alt(r)
+        pos = "last" if i == len(orows) - 1 else "mid"
         specs.append((f"os-{r['owner']}-{r['repo']}".lower().replace(".", "-"),
-                      lambda ph, r=r, alt=alt: (rows_card([r], ph, alt, "mid"), alt), r["url"]))
+                      lambda ph, r=r, alt=alt, pos=pos: (rows_card([r], ph, alt, pos), alt), r["url"]))
     team_note = "private repos, happy to walk through the code"
     for name, title, note, rows in (("work", "Work", None, WORK), ("team", "Team products", team_note, TEAM)):
         t = {"kind": "title", "text": title, "note": note, "note_cls": "sm"}
         alt = f"{title}" + (f", {note}" if note else "") + ". " + work_alt(rows)
-        specs.append((name, lambda ph, t=t, rows=rows, alt=alt: (rows_card([t] + rows, ph, alt, "mid"), alt), SITE))
+        specs.append((name, lambda ph, t=t, rows=rows, alt=alt: (rows_card([t] + rows, ph, alt, "only"), alt), SITE))
     alt = ("Stack. " + " ".join(f"{k}: {v}." for k, v in STACK_ROWS) + " " + ". ".join(STACK_FACTS) + ".")
     t = {"kind": "title", "text": "Stack"}
-    specs.append(("stack", lambda ph: (rows_card([t, {"kind": "stack"}], ph, alt, "last"), alt), SITE))
+    specs.append(("stack", lambda ph: (rows_card([t, {"kind": "stack"}], ph, alt, "only"), alt), SITE))
     return specs
 
 
@@ -1090,15 +1098,20 @@ def picture(prefix, name, alt, href):
 
 
 def readme(alts, specs, prefix) -> str:
-    """One paragraph, one line per segment: align="top" images stack with no gap on github.com."""
+    """One paragraph per category card, one line per segment; a blank line between cards.
+    align="top" images in one paragraph stack with no gap on github.com, paragraphs sit 16px apart."""
     link = {n: h for n, _, h in specs}
     pic = lambda n: picture(prefix, n, alts[n], link[n])
     tools = [f"tool-{t[0].lower()}" for t in TOOLS]
     oss = [n for n, _, _ in specs if n.startswith("os-")]
-    lines = [picture(prefix, "hero", HERO_ALT, SITE), pic("vitals"),
-             picture(prefix, "git-hospital", GH_ALT, "https://github.com/Git-Hospital"),
-             *map(pic, tools), pic("head-open-source"), *map(pic, oss), pic("work"), pic("team"), pic("stack")]
-    return "\n".join(lines) + "\n"
+    groups = [
+        [picture(prefix, "hero", HERO_ALT, SITE)],
+        [pic("vitals")],
+        [picture(prefix, "git-hospital", GH_ALT, "https://github.com/Git-Hospital"), *map(pic, tools)],
+        [pic("head-open-source"), *map(pic, oss)],
+        [pic("work")], [pic("team")], [pic("stack")],
+    ]
+    return "\n\n".join("\n".join(g) for g in groups) + "\n"
 
 
 # ---------------------------------------------------------------- driver

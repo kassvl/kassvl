@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Write four local pages that imitate GitHub's README column, for looking at the one card.
+"""Write four local pages that imitate GitHub's README column, for looking at the category cards.
 
 Desktop (column 846px) and phone (column 308px), each on a dark (#0d1117) and a light (#ffffff)
-page. The card is always the night palette; only the page behind it changes. Images are
-top-aligned and inline, so they stack with no gap like `align="top"` images on github.com.
+page. The cards are always the night palette; only the page behind it changes. Images are
+top-aligned and inline, so the segments of one card (one paragraph) touch like `align="top"`
+images on github.com, and the paragraphs are 16px apart like GitHub's paragraph margin.
 Output goes to assets/src/preview/ (gitignored); nothing committed is touched.
 
 Usage: python3 assets/src/preview.py
