@@ -1,2 +1,5 @@
 .fonts/
 __pycache__/
+.venv/
+data.json.bak
+preview/

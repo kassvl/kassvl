@@ -1,0 +1,254 @@
+{
+ "calendar": {
+  "weeks": [
+   {
+    "start": "2025-11-23",
+    "count": 10
+   },
+   {
+    "start": "2025-11-30",
+    "count": 0
+   },
+   {
+    "start": "2025-12-07",
+    "count": 0
+   },
+   {
+    "start": "2025-12-14",
+    "count": 4
+   },
+   {
+    "start": "2025-12-21",
+    "count": 0
+   },
+   {
+    "start": "2025-12-28",
+    "count": 0
+   },
+   {
+    "start": "2026-01-04",
+    "count": 3
+   },
+   {
+    "start": "2026-01-11",
+    "count": 0
+   },
+   {
+    "start": "2026-01-18",
+    "count": 0
+   },
+   {
+    "start": "2026-01-25",
+    "count": 0
+   },
+   {
+    "start": "2026-02-01",
+    "count": 1
+   },
+   {
+    "start": "2026-02-08",
+    "count": 0
+   },
+   {
+    "start": "2026-02-15",
+    "count": 44
+   },
+   {
+    "start": "2026-02-22",
+    "count": 0
+   },
+   {
+    "start": "2026-03-01",
+    "count": 0
+   },
+   {
+    "start": "2026-03-08",
+    "count": 21
+   },
+   {
+    "start": "2026-03-15",
+    "count": 0
+   },
+   {
+    "start": "2026-03-22",
+    "count": 0
+   },
+   {
+    "start": "2026-03-29",
+    "count": 0
+   },
+   {
+    "start": "2026-04-05",
+    "count": 0
+   },
+   {
+    "start": "2026-04-12",
+    "count": 0
+   },
+   {
+    "start": "2026-04-19",
+    "count": 0
+   },
+   {
+    "start": "2026-04-26",
+    "count": 0
+   },
+   {
+    "start": "2026-05-03",
+    "count": 0
+   },
+   {
+    "start": "2026-05-10",
+    "count": 0
+   },
+   {
+    "start": "2026-05-17",
+    "count": 20
+   },
+   {
+    "start": "2026-05-24",
+    "count": 39
+   },
+   {
+    "start": "2026-05-31",
+    "count": 105
+   },
+   {
+    "start": "2026-06-07",
+    "count": 122
+   },
+   {
+    "start": "2026-06-14",
+    "count": 179
+   },
+   {
+    "start": "2026-06-21",
+    "count": 103
+   },
+   {
+    "start": "2026-06-28",
+    "count": 18
+   },
+   {
+    "start": "2026-07-05",
+    "count": 87
+   },
+   {
+    "start": "2026-07-12",
+    "count": 114
+   },
+   {
+    "start": "2026-07-19",
+    "count": 10
+   },
+   {
+    "start": "2026-07-26",
+    "count": 39
+   },
+   {
+    "start": "2026-08-02",
+    "count": 47
+   },
+   {
+    "start": "2026-08-09",
+    "count": 9
+   },
+   {
+    "start": "2026-08-16",
+    "count": 47
+   },
+   {
+    "start": "2026-08-23",
+    "count": 8
+   },
+   {
+    "start": "2026-08-30",
+    "count": 0
+   },
+   {
+    "start": "2026-09-06",
+    "count": 0
+   },
+   {
+    "start": "2026-09-13",
+    "count": 34
+   },
+   {
+    "start": "2026-09-20",
+    "count": 58
+   },
+   {
+    "start": "2026-09-27",
+    "count": 513
+   },
+   {
+    "start": "2026-10-04",
+    "count": 257
+   },
+   {
+    "start": "2026-10-11",
+    "count": 147
+   },
+   {
+    "start": "2026-10-18",
+    "count": 133
+   },
+   {
+    "start": "2026-10-25",
+    "count": 227
+   },
+   {
+    "start": "2026-11-01",
+    "count": 27
+   },
+   {
+    "start": "2026-11-08",
+    "count": 146
+   },
+   {
+    "start": "2026-11-15",
+    "count": 26
+   },
+   {
+    "start": "2026-11-22",
+    "count": 34
+   }
+  ],
+  "total": 2632,
+  "active_days": 129,
+  "longest_streak": 21
+ },
+ "merged_outside": 157,
+ "repos": {
+  "nordstjernen-web/nordstjernen-sol-browser": {
+   "stars": 237,
+   "merged": 68,
+   "open": 1,
+   "latest_title": "Layout: give ::first-letter its own inline box, punctuation and float",
+   "latest_merged": "2026-11-24"
+  },
+  "getsentry/relay": {
+   "stars": 404,
+   "merged": 6,
+   "open": 0,
+   "latest_title": "feat(unreal): Add a stack trace from the crash context when there is no minidump",
+   "latest_merged": "2026-11-12"
+  },
+  "istio/istio.io": {
+   "stars": 821,
+   "merged": 2,
+   "open": 1,
+   "latest_title": "Fix markdown style issues in English content",
+   "latest_merged": "2026-10-20"
+  },
+  "nordstjernen-web/southstar-browser": {
+   "stars": 33,
+   "merged": 3,
+   "open": 1,
+   "latest_title": "Implement ReadableStream, WritableStream and TransformStream to the Streams standard",
+   "latest_merged": "2026-10-16"
+  }
+ },
+ "updated": "2026-11-24",
+ "reviewed_public": 111
+}

@@ -1,0 +1,48 @@
+name: Refresh profile cards
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+  push:
+    branches: ["redesign/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install fonttools brotli
+      - name: Fetch numbers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 assets/src/fetch.py
+      - name: Build cards and README
+        run: python3 assets/src/build.py
+      - name: Commit changes (main only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git add README.md assets/*.svg assets/src/data.json
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Refresh profile numbers"
+            git push
+          fi
+      - name: Show result (other branches)
+        if: github.ref != 'refs/heads/main'
+        run: |
+          python3 -c "import json; d=json.load(open('assets/src/data.json')); c=d['calendar']; print('contributions', c['total'], 'reviewed', d['reviewed_public'], 'merged outside', d['merged_outside']); [print(r, v['merged'], v['open']) for r, v in d['repos'].items()]"
+          git diff --stat
