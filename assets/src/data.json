@@ -123,7 +123,7 @@
    },
    {
     "start": "2026-06-21",
-    "count": 103
+    "count": 104
    },
    {
     "start": "2026-06-28",
@@ -187,11 +187,11 @@
    },
    {
     "start": "2026-10-11",
-    "count": 147
+    "count": 149
    },
    {
     "start": "2026-10-18",
-    "count": 133
+    "count": 131
    },
    {
     "start": "2026-10-25",
@@ -199,11 +199,11 @@
    },
    {
     "start": "2026-11-01",
-    "count": 27
+    "count": 39
    },
    {
     "start": "2026-11-08",
-    "count": 146
+    "count": 134
    },
    {
     "start": "2026-11-15",
@@ -211,20 +211,20 @@
    },
    {
     "start": "2026-11-22",
-    "count": 34
+    "count": 55
    }
   ],
-  "total": 2632,
-  "active_days": 129,
+  "total": 2654,
+  "active_days": 131,
   "longest_streak": 21
  },
- "merged_outside": 157,
+ "merged_outside": 163,
  "repos": {
   "nordstjernen-web/nordstjernen-sol-browser": {
-   "stars": 237,
-   "merged": 68,
+   "stars": 239,
+   "merged": 71,
    "open": 1,
-   "latest_title": "Layout: give ::first-letter its own inline box, punctuation and float",
+   "latest_title": "Layout: give ::before and ::after of inline elements their own styled inline box",
    "latest_merged": "2026-11-24"
   },
   "getsentry/relay": {
@@ -243,12 +243,12 @@
   },
   "nordstjernen-web/southstar-browser": {
    "stars": 33,
-   "merged": 3,
+   "merged": 6,
    "open": 1,
-   "latest_title": "Implement ReadableStream, WritableStream and TransformStream to the Streams standard",
-   "latest_merged": "2026-10-16"
+   "latest_title": "Resolve flex items' percentage padding against the flex container",
+   "latest_merged": "2026-11-25"
   }
  },
- "updated": "2026-11-24",
+ "updated": "2026-11-25",
  "reviewed_public": 111
 }
