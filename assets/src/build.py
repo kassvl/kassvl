@@ -867,19 +867,20 @@ def row_languages(c, y, r, phone):
     c.add(f'<clipPath id="bar"><rect x="{PAD}" y="{top}" width="{c.W - 2 * PAD}" height="{BAR_H}" rx="{BAR_H / 2}"/></clipPath>'
           f'<g clip-path="url(#bar)">' + "".join(segs) + "</g>")
     n, avail = len(items), c.W - 2 * PAD
-    cols = 2 if phone else n
-    if not phone and max(legend_item_w(i) for i in items) + 16 > avail / n:
-        cols = (n + 1) // 2
+    widest = max(legend_item_w(i) for i in items) + 16   # an item plus room before the next dot
+    # the most columns the widest item fits in; one column (and a cut name) is the last resort
+    cols = next((k for k in ((2, 1) if phone else (n, (n + 1) // 2, 2, 1)) if widest <= avail / k), 1)
     col_w = avail / cols
-    assert all(legend_item_w(i) <= col_w for i in items), "legend item wider than its column"
     row_h = 34
     for k, it in enumerate(items):
         cx, cy = PAD + (k % cols) * col_w, top + BAR_H + 26 + (k // cols) * row_h
         color = BORDER if it["name"] == "other" else LANG_COLORS[k]
         c.add(f'<circle cx="{cx + DOT / 2:.1f}" cy="{cy:.1f}" r="{DOT / 2}" fill="{color}"/>')
         nx = cx + DOT + 8
-        c.t(nx, cy + 7, "st", it["name"])
-        c.t(nx + measure("sans", it["name"], 20) + 10, cy + 6, "d", f"{it['share']:.1f}%")
+        share = f"{it['share']:.1f}%"
+        name = ellipsize("sans", it["name"], 20, col_w - DOT - 8 - 10 - measure("mono", share, 16))
+        c.t(nx, cy + 7, "st", name)
+        c.t(nx + measure("sans", name, 20) + 10, cy + 6, "d", share)
     rows = (n + cols - 1) // cols
     return top + BAR_H + 26 + (rows - 1) * row_h + 7 + 32 - y
 
@@ -1133,7 +1134,7 @@ def card_specs(data):
         alt = f"{title}" + (f", {note}" if note else "") + ". " + work_alt(rows)
         specs.append((name, lambda ph, t=t, rows=rows, alt=alt: (rows_card([t] + rows, ph, alt, "only"), alt), SITE))
     lang = data.get("languages")
-    if lang:
+    if lang and lang.get("items"):
         note = "share of code in my public repos and Git Hospital"
         t = {"kind": "title", "text": "Languages", "note": note, "note_cls": "d"}
         row = {"kind": "languages", "items": lang["items"]}

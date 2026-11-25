@@ -129,9 +129,10 @@ One horizontal bar across the content width (x 40 to 1160), 14 units high with r
 gaps in the card background between segments, segment width proportional to share (at least 6 units
 so a small share stays visible; the excess comes off the largest segment). Static, no animation.
 Under it a legend in bar order: a 10-unit dot in the segment color, the name in sentence type
-(ink strong), the share in data type (ink muted), like `68.4%`. Desktop: columns of equal width
-starting at x 40, all on one row when every item fits its column by measured width, otherwise two
-rows; phones: two columns.
+(ink strong), the share in data type (ink muted), like `68.4%`. Columns of equal width starting
+at the side padding; the legend takes the most columns in which the widest item, measured, still
+leaves 16 units before the next dot: on desktop one row, else two rows, else two columns, else
+one; on phones two columns, else one. A name too long even for one column is cut with an ellipsis.
 
 Colors by rank, from the tokens only: `#c7331e`, `#d9a441`, `#7fb069`, `#d1c3b4`, `#968779`,
 `#695c51`, and "other" (everything past the top 6, shown when at least 0.1%) in the border color
@@ -206,6 +207,12 @@ Team products:
 - 2026-11-25, at the owner's request: the single card was split into one card per category,
   because the single stack read as an undifferentiated list. Palette, fonts and row design are
   unchanged.
+- 2026-11-25, review of the languages card. Fixed: a long language name no longer stops the
+  build (the legend drops to fewer columns, then cuts the name), and an empty `items` list skips
+  the card. Not changed, with reasons: a top-6 language under 0.05% would show `0.0%` (needs a
+  near-empty account); the query reads at most 100 user and 50 organization repositories and 20
+  languages each without paging (16 repositories today); the stored repository count can change
+  `data.json` without a shown number changing (rare, and a new repository usually moves a share).
 
 ## Data rules
 
