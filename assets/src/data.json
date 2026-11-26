@@ -211,21 +211,21 @@
    },
    {
     "start": "2026-11-22",
-    "count": 55
+    "count": 69
    }
   ],
-  "total": 2654,
-  "active_days": 131,
+  "total": 2668,
+  "active_days": 132,
   "longest_streak": 21
  },
- "merged_outside": 163,
+ "merged_outside": 168,
  "repos": {
   "nordstjernen-web/nordstjernen-sol-browser": {
    "stars": 239,
-   "merged": 71,
-   "open": 1,
-   "latest_title": "Layout: give ::before and ::after of inline elements their own styled inline box",
-   "latest_merged": "2026-11-24"
+   "merged": 74,
+   "open": 0,
+   "latest_title": "Layout: let generated content set the height of its line",
+   "latest_merged": "2026-11-25"
   },
   "getsentry/relay": {
    "stars": 404,
@@ -243,12 +243,12 @@
   },
   "nordstjernen-web/southstar-browser": {
    "stars": 33,
-   "merged": 6,
-   "open": 1,
-   "latest_title": "Resolve flex items' percentage padding against the flex container",
+   "merged": 8,
+   "open": 0,
+   "latest_title": "Fall back through the page's font-family list",
    "latest_merged": "2026-11-25"
   }
  },
- "updated": "2026-11-25",
+ "updated": "2026-11-26",
  "reviewed_public": 111
 }
